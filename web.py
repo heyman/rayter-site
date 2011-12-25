@@ -43,12 +43,14 @@ def index():
     print games
     return render_template("index.html", games=games)
 
-@app.route("/post_push")
+@app.route("/post_push", methods=["POST"])
 def post_push():
+    
     print "post_push"
-    print "data:", request.data
     updated = {}
-    push_info = simplejson.loads(request.data)
+    data = request.form["payload"]
+    print "data:", data
+    push_info = simplejson.loads(data)
     for commit in push_info["commits"]:
         for name in commit.get("added", []) + commit.get("removed", []) + commit.get("modified", []):
             updated[name] = True

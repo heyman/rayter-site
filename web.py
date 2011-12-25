@@ -45,7 +45,6 @@ def index():
 
 @app.route("/post_push", methods=["POST"])
 def post_push():
-    
     print "post_push"
     updated = {}
     data = request.form["payload"]
@@ -57,7 +56,7 @@ def post_push():
     
     for name in updated.iterkeys():
         if name.endswith(".txt"):
-            refresh_file(name)
+            refresh_file(name[:-4])
     
     return "done"
 

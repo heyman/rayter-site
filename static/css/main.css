@@ -13,6 +13,9 @@ ol {
     padding-left: 10px;
     font-size: 16px;
 }
+ol li {
+    margin-bottom: 3px;
+}
 
 body.game table th {
     background: #f7f7f7;
@@ -28,4 +31,16 @@ body.game table th {
 }
 body.game table td.rating {
     font-weight: bold;
+}
+body.game table td.delta {
+    padding-left: 30px;
+}
+body.game table td.delta.plus,
+body.game table td.delta.minus {
+    background-image: url(../img/arrow_up.gif);
+    background-repeat: no-repeat;
+    background-position: 10px 17px;
+}
+body.game table td.delta.minus {
+    background-image: url(../img/arrow_down.gif);
 }

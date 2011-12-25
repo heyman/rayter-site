@@ -1,0 +1,31 @@
+body {
+    padding: 30px;
+    font-family: Arial,Helvetica;
+    color: #555;
+}
+
+h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+ol {
+    padding-left: 10px;
+    font-size: 16px;
+}
+
+body.game table th {
+    background: #f7f7f7;
+    color: #000;
+    text-transform: uppercase;
+    font-size: 12px;
+}
+
+body.game table td,
+body.game table th {
+    padding: 10px;
+    border: 1px solid #eee;
+}
+body.game table td.rating {
+    font-weight: bold;
+}

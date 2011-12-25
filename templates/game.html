@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block body_class %}game{% endblock %}
+
+{% block content %}
+    <h1>{{name}}</h1>
+    
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Number of games</th>
+            <th>Rating</th>
+            <th>Change since last game</th>
+        </tr>
+        
+        {% for player in players %}
+            <tr>
+                <td class="name">{{player[0]}}</td>
+                <td class="game_count">{{player[1]}}</td>
+                <td class="rating">{{player[2]}}</td>
+                <td class="delta{% if player[3] > 0 %} plus{% elif player[3] < 0 %} minus{% endif %}">{{player[3]}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

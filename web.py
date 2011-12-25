@@ -45,6 +45,8 @@ def index():
 
 @app.route("/post_push")
 def post_push():
+    print "post_push"
+    print "data:", request.data
     updated = {}
     push_info = simplejson.loads(request.data)
     for commit in push_info["commits"]:

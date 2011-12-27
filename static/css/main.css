@@ -31,15 +31,17 @@ body.game table th {
 }
 body.game table td.rating {
     font-weight: bold;
+    text-align: right;
 }
 body.game table td.delta {
-    padding-left: 30px;
+    padding-right: 30px;
+    text-align: right;
 }
 body.game table td.delta.plus,
 body.game table td.delta.minus {
     background-image: url(../img/arrow_up.gif);
     background-repeat: no-repeat;
-    background-position: 10px 17px;
+    background-position: 97% 17px;
 }
 body.game table td.delta.minus {
     background-image: url(../img/arrow_down.gif);

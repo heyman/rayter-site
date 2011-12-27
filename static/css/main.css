@@ -29,19 +29,24 @@ body.game table th {
     padding: 10px;
     border: 1px solid #eee;
 }
+body.game table td {
+    text-align: right;
+}
+body.game table td.name {
+    text-align: left;
+}
 body.game table td.rating {
     font-weight: bold;
-    text-align: right;
 }
 body.game table td.delta {
     padding-right: 30px;
-    text-align: right;
+    width: 35px;
 }
 body.game table td.delta.plus,
 body.game table td.delta.minus {
     background-image: url(../img/arrow_up.gif);
     background-repeat: no-repeat;
-    background-position: 97% 17px;
+    background-position: 55px 17px;
 }
 body.game table td.delta.minus {
     background-image: url(../img/arrow_down.gif);

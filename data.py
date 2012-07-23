@@ -2,29 +2,30 @@ import os
 import os.path
 import simplejson
 import settings
+import redis
 
-def filename(name):
-    return os.path.join(settings.DATA_DIR, name + ".json")
+redis = redis.from_url(settings.REDIS_URL)
+
+def rayter_name(name):
+    return "rayter_" + name
 
 def load(name):
-    with file(filename(name)) as f:
-        data = simplejson.loads(f.read())
-    return data
+    return redis.get(rayter_name(name))
 
 def save(name, data):
-    with file(filename(name), "w") as f:
-        f.write(simplejson.dumps(data))
+    redis.set(rayter_name(name), data)
 
 def exists(name):
-    return os.path.exists(filename(name))
+    return redis.exists(rayter_name(name))
 
 def delete(name):
     if exists(name):
-        os.path.remove(filename(name))
+        redis.delete(rayter_name(name))
 
 def list():
     names = []
-    for f in os.listdir(settings.DATA_DIR):
-        if f.endswith(".json"):
-            names.append(f[:-5])
+    for key in redis.keys():
+        print key
+        if key.startswith("rayter_"):
+            names.append(key[7:])
     return names

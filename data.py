@@ -25,7 +25,6 @@ def delete(name):
 def list():
     names = []
     for key in redis.keys():
-        print key
         if key.startswith("rayter_"):
             names.append(key[7:])
     return names

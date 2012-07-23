@@ -5,6 +5,9 @@ from flask import Flask, render_template, request
 import simplejson
 import requests
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 from rayter.main import parse_file
 from rayter.game_parser import GamesParser
 from rayter.rater import Rater

@@ -46,6 +46,11 @@ def index():
     print games
     return render_template("index.html", games=games)
 
+@app.route("/refresh_game/<name>")
+def refresh_game(name):
+    refresh_file(name)
+    return "done"
+
 @app.route("/post_push", methods=["POST"])
 def post_push():
     print "post_push"

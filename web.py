@@ -1,7 +1,7 @@
 import os.path
 from StringIO import StringIO
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import simplejson
 import requests
 
@@ -28,12 +28,14 @@ def refresh_file(name):
     if response.status_code == 404:
         print "Not found"
         data.delete(name)
+        return False
     elif response.status_code == 200:
         parser = GamesParser(StringIO(response.content), name)
         games = parser.parse_file()
         rater = Rater(games)
         ratings = rater.rate_games(parser.score_type)
         data.save(name, ratings)
+        return True
     
 @app.route("/refresh/<name>")
 def refresh(name):
@@ -48,8 +50,10 @@ def index():
 
 @app.route("/refresh_game/<name>")
 def refresh_game(name):
-    refresh_file(name)
-    return "done"
+    if refresh_file(name):
+        return redirect("/" + name)
+    else:
+        return "Could not find game"
 
 @app.route("/post_push", methods=["POST"])
 def post_push():

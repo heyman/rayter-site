@@ -10,10 +10,11 @@ def rayter_name(name):
     return "rayter_" + name
 
 def load(name):
-    return redis.get(rayter_name(name))
+    raw = redis.get(rayter_name(name))
+    return simplejson.loads(raw)
 
 def save(name, data):
-    redis.set(rayter_name(name), data)
+    redis.set(rayter_name(name), simplejson.dumps(data))
 
 def exists(name):
     return redis.exists(rayter_name(name))

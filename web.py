@@ -45,6 +45,7 @@ def refresh(name):
 @app.route("/")
 def index():
     games = data.list()
+    games.sort()
     print games
     return render_template("index.html", games=games)
 

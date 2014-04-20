@@ -10,8 +10,8 @@
         </tr>
         {% for name, players in games %}
             <tr>
-                <td><a href="/{{ name }}">{{ name }}</a></td>
-                <td>{% if players|length > 0 %}{{ players[0][0] }}{% endif %}</td>
+                <td class="name"><a href="/{{ name }}">{{ name }}</a></td>
+                <td class="name">{% if players|length > 0 %}{{ players[0][0] }}{% endif %}</td>
             </tr>
         {% endfor %}
     </table>

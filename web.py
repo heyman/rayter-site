@@ -75,7 +75,7 @@ def post_push():
 
 @app.route("/favicon.ico")
 def favicon():
-    return Response("Not found", status_code=404)
+    return Response("Not found", status=404)
 
 @app.route("/<name>")
 def show_game(name):

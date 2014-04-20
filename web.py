@@ -1,7 +1,7 @@
 import os.path
 from StringIO import StringIO
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, Response
 import simplejson
 import requests
 
@@ -72,6 +72,10 @@ def post_push():
             refresh_file(name[:-4])
     
     return "done"
+
+@app.route("/favicon.ico")
+def favicon():
+    return Response("Not found", status_code=404)
 
 @app.route("/<name>")
 def show_game(name):

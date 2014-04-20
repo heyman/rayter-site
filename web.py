@@ -80,6 +80,7 @@ def favicon():
 @app.route("/<name>")
 def show_game(name):
     game_data = data.load(name)
+    print "game_data:", game_data
     return render_template("game.html", name=name, players=game_data)
 
 if __name__ == '__main__':

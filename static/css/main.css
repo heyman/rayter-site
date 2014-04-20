@@ -17,37 +17,37 @@ ul li {
     margin-bottom: 3px;
 }
 
-body.game table th {
+table th {
     background: #f7f7f7;
     color: #000;
     text-transform: uppercase;
     font-size: 12px;
 }
 
-body.game table td,
-body.game table th {
+table td,
+table th {
     padding: 10px;
     border: 1px solid #eee;
 }
-body.game table td {
+table td {
     text-align: right;
 }
-body.game table td.name {
+table td.name {
     text-align: left;
 }
-body.game table td.rating {
+table td.rating {
     font-weight: bold;
 }
-body.game table td.delta {
+table td.delta {
     padding-right: 30px;
     width: 35px;
 }
-body.game table td.delta.plus,
-body.game table td.delta.minus {
+table td.delta.plus,
+table td.delta.minus {
     background-image: url(../img/arrow_up.gif);
     background-repeat: no-repeat;
     background-position: 55px 17px;
 }
-body.game table td.delta.minus {
+table td.delta.minus {
     background-image: url(../img/arrow_down.gif);
 }

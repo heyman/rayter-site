@@ -3,9 +3,16 @@
 {% block content %}
     <h1>Games</h1>
     
-    <ul>
-        {% for game in games %}
-            <li><a href="/{{game}}">{{game}}</a></li>
+    <table>
+        <tr>
+            <th>Game</th>
+            <th>Leader</th>
+        </tr>
+        {% for name, players in games %}
+            <tr>
+                <td><a href="/{{ name }}">{{ name }}</a></td>
+                <td>{% if players|length > 0 %}{{ players[0][0] }}{% endif %}</td>
+            </tr>
         {% endfor %}
-    </ul>
+    </table>
 {% endblock %}

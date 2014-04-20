@@ -44,8 +44,12 @@ def refresh(name):
 
 @app.route("/")
 def index():
-    games = data.list()
-    games.sort()
+    game_names = sorted(data.list())
+    games = []
+    for name in game_names:
+        game = data.load(name)
+        games.append((name, game))
+    
     print games
     return render_template("index.html", games=games)
 

@@ -8,9 +8,9 @@
             <th>Game</th>
             <th>Leader</th>
         </tr>
-        {% for name, players in games %}
+        {% for name, game_name, players in games %}
             <tr>
-                <td class="name"><a href="/{{ name }}">{{ name }}</a></td>
+                <td class="name"><a href="/{{ name }}">{{ game_name }}</a></td>
                 <td class="name">{% if players|length > 0 %}{{ players[0][0] }}{% endif %}</td>
             </tr>
         {% endfor %}

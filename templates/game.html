@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 
+{% block title %}{{game_name}} - {{super()}}{% endblock %}
 {% block body_class %}game{% endblock %}
 
 {% block content %}
-    <h1>{{name}}</h1>
+    <h1>{{game_name}}</h1>
     
     <table>
         <tr>
+            <th>Position</th>
             <th>Name</th>
             <th>Number of games</th>
             <th>Rating</th>
@@ -15,6 +17,7 @@
         
         {% for player in players %}
             <tr>
+                <td class="position">{{loop.index}}</td>
                 <td class="name">{{player[0]}}</td>
                 <td class="game_count">{{player[1]}}</td>
                 <td class="rating">{{player[2]|int}}</td>
@@ -22,4 +25,7 @@
             </tr>
         {% endfor %}
     </table>
+    <p>
+        <a href="https://github.com/peterjaric/rayter-games/blob/master/{{name}}.txt">Edit or view played games on GitHub</a>.
+    </p>
 {% endblock %}

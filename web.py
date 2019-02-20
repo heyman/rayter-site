@@ -34,24 +34,28 @@ def refresh_file(name):
         games = parser.parse_file()
         rater = Rater(games)
         ratings = rater.rate_games(parser.score_type)
-        data.save(name, ratings)
+        game = {
+            "game_name": parser.game_name,
+            "ratings": ratings
+        }
+        data.save(name, game)
         return True
     
-@app.route("/refresh/<name>")
-def refresh(name):
-    refresh_file(name)
-    return "done"
-
 @app.route("/")
 def index():
     game_names = sorted(data.list())
     games = []
     for name in game_names:
         game = data.load(name)
-        games.append((name, game))
+        print game
+        games.append((name, game['game_name'], game['ratings']))
     
-    print games
     return render_template("index.html", games=games)
+
+@app.route("/refresh/<name>")
+def refresh(name):
+    refresh_file(name)
+    return "done"
 
 @app.route("/refresh_game/<name>")
 def refresh_game(name):
@@ -59,6 +63,13 @@ def refresh_game(name):
         return redirect("/" + name)
     else:
         return "Could not find game"
+
+@app.route("/refresh_all")
+def refresh_all():
+    game_names = data.list()
+    for name in game_names:
+        refresh_file(name)
+    return "done"
 
 @app.route("/post_push", methods=["POST"])
 def post_push():
@@ -85,7 +96,7 @@ def favicon():
 def show_game(name):
     game_data = data.load(name)
     print "game_data:", game_data
-    return render_template("game.html", name=name, players=game_data)
+    return render_template("game.html", name=name, players=game_data['ratings'], game_name=game_data['game_name'])
 
 if __name__ == '__main__':
     app.run(debug=True)

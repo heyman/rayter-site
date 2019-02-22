@@ -1,3 +1,4 @@
 *.pyc
 rayter-site.wpr
 data/**
+venv/**

@@ -9,12 +9,21 @@ h1 {
     margin-bottom: 15px;
 }
 
+h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
 ul {
     padding-left: 10px;
     font-size: 16px;
 }
 ul li {
     margin-bottom: 3px;
+}
+
+table {
+    margin-bottom: 40px;
 }
 
 table th {

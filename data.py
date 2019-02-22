@@ -1,6 +1,6 @@
 import os
 import os.path
-import simplejson
+import json
 import settings
 import redis
 
@@ -11,10 +11,10 @@ def rayter_name(name):
 
 def load(name):
     raw = redis.get(rayter_name(name))
-    return simplejson.loads(raw)
+    return json.loads(raw)
 
 def save(name, data):
-    redis.set(rayter_name(name), simplejson.dumps(data))
+    redis.set(rayter_name(name), json.dumps(data))
 
 def exists(name):
     return redis.exists(rayter_name(name))

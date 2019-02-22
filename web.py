@@ -2,7 +2,7 @@ import os.path
 from StringIO import StringIO
 
 from flask import Flask, render_template, request, redirect, Response
-import simplejson
+import json
 import requests
 
 import logging
@@ -45,12 +45,29 @@ def refresh_file(name):
 def index():
     game_names = sorted(data.list())
     games = []
+    global_ratings = {}
+
     for name in game_names:
         game = data.load(name)
-        print game
-        games.append((name, game['game_name'], game['ratings']))
+        players = game['ratings']
+        games.append((name, game['game_name'], players))
+
+        for player_name, game_count, rating, delta in players:
+            if player_name not in global_ratings:
+                global_ratings[player_name] = []
+            global_ratings[player_name].append(rating)
+
+    average_ratings = []
+    for player_name, player_ratings in global_ratings.items():
+        if len(player_ratings) > 3:
+            average_ratings.append((player_name, float(sum(player_ratings)) / len(player_ratings)))
     
-    return render_template("index.html", games=games)
+    print average_ratings
+
+    average_ratings.sort(key=lambda p:p[1], reverse=True)
+
+
+    return render_template("index.html", games=games, top_list=average_ratings)
 
 @app.route("/refresh/<name>")
 def refresh(name):
@@ -77,7 +94,7 @@ def post_push():
     updated = {}
     data = request.form["payload"]
     print "data:", data
-    push_info = simplejson.loads(data)
+    push_info = json.loads(data)
     for commit in push_info["commits"]:
         for name in commit.get("added", []) + commit.get("removed", []) + commit.get("modified", []):
             updated[name] = True

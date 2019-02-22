@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Games</h1>
+    <h1>Rayter</h1>
     
+    <h2>Games</h2>
+
     <table>
         <tr>
             <th>Game</th>
@@ -15,4 +17,21 @@
             </tr>
         {% endfor %}
     </table>
-{% endblock %}
+
+    <h2>Top list</h2>
+
+    <table>
+        <tr>
+            <th>Position</th>
+            <th>Name</th>
+            <th>Average rating</th>
+        </tr>
+        {% for name, rating in top_list %}
+            <tr>
+                <td class="position">{{ loop.index }}</td>
+                <td class="name">{{ name }}</td>
+                <td class="rating">{{ rating|int }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endblock %}

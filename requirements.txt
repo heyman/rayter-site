@@ -1,5 +1,5 @@
 Flask==0.9
-rayter>=0.1.3
+rayter>=0.1.4
 requests
 redis
 gunicorn==0.14.5

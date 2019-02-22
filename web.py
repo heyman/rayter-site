@@ -36,7 +36,8 @@ def refresh_file(name):
         ratings = rater.rate_games(parser.score_type)
         game = {
             "game_name": parser.game_name,
-            "ratings": ratings
+            "ratings": ratings,
+            "count": len(games),
         }
         data.save(name, game)
         return True
@@ -50,7 +51,8 @@ def index():
     for name in game_names:
         game = data.load(name)
         players = game['ratings']
-        games.append((name, game['game_name'], players))
+        print game
+        games.append((name, game['game_name'], players, game['count']))
 
         for player_name, game_count, rating, delta in players:
             if player_name not in global_ratings:

@@ -9,11 +9,15 @@
         <tr>
             <th>Game</th>
             <th>Leader</th>
+            <th>Leader rating</th>
+            <th>Total games</th>
         </tr>
-        {% for name, game_name, players in games %}
+        {% for name, game_name, players, game_count in games %}
             <tr>
                 <td class="name"><a href="/{{ name }}">{{ game_name }}</a></td>
                 <td class="name">{% if players|length > 0 %}{{ players[0][0] }}{% endif %}</td>
+                <td class="rating">{% if players|length > 0 %}{{ players[0][2]|int }}{% endif %}</td>
+                <td class="rating">{{ game_count }}</td>
             </tr>
         {% endfor %}
     </table>

@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, redirect, Response
 from time import strftime
 import json
 import requests
+import numpy
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -14,11 +15,12 @@ from rayter.main import parse_file
 from rayter.game_parser import GamesParser
 from rayter.rater import Rater
 
+from pprint import pprint
+
 import github_api
 import settings
 import data
 from auth import Auth
-
 
 app = Flask(__name__)
 auth = Auth(app, settings.RAYTER_USERS)
@@ -68,6 +70,21 @@ def refresh_from_game_file(name):
         logging.error(e)
 
 
+def top_list(ratings):
+    average_ratings = []
+    for player_name, player_data in ratings.items():
+        if len(player_data) > 3:
+            player_ratings = map(lambda tuple: tuple[0], player_data)
+            player_counts = map(lambda tuple: tuple[1], player_data)
+            average = numpy.average(player_ratings, weights=player_counts)
+            #            average = float(sum(player_ratings)) / len(player_ratings)
+            average_ratings.append((player_name, average))
+
+    average_ratings.sort(key=lambda p: p[1], reverse=True)
+
+    return average_ratings
+
+
 @app.route("/")
 def index():
     game_names = sorted(data.list())
@@ -77,26 +94,16 @@ def index():
     for name in game_names:
         game = data.load(name)
         players = game['ratings']
-        print game
         games.append((name, game['game_name'], players, game['count']))
 
         for player_name, game_count, rating, delta in players:
             if player_name not in global_ratings:
                 global_ratings[player_name] = []
-            global_ratings[player_name].append(rating)
+            global_ratings[player_name].append((rating, game_count))
 
-    average_ratings = []
-    for player_name, player_ratings in global_ratings.items():
-        if len(player_ratings) > 3:
-            average_ratings.append(
-                (player_name,
-                 float(sum(player_ratings)) / len(player_ratings)))
-
-    print average_ratings
-
-    average_ratings.sort(key=lambda p: p[1], reverse=True)
-
-    return render_template("index.html", games=games, top_list=average_ratings)
+    return render_template("index.html",
+                           games=games,
+                           top_list=top_list(global_ratings))
 
 
 @app.route("/refresh/<name>")

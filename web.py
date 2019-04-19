@@ -76,6 +76,8 @@ def top_list(ratings):
         if len(player_data) > 3:
             player_ratings = map(lambda tuple: tuple[0], player_data)
             player_counts = map(lambda tuple: tuple[1], player_data)
+            player_ratings.append(1000)
+            player_counts.append(10)
             average = numpy.average(player_ratings, weights=player_counts)
             #            average = float(sum(player_ratings)) / len(player_ratings)
             average_ratings.append((player_name, average))

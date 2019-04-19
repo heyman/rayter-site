@@ -4,11 +4,16 @@
 {% block body_class %}game{% endblock %}
 
 {% block content %}
-    <h1>New game created
-    </h1>
+    <h1>New game created</h1>
+    <p>
         Game: {{ match.game }}<br>
         Time: {{ match.time }}<br>
         {% for result in match.results %}
             {{ result[0] }}: {{ result[1] }}<br>
         {% endfor %}
+    </p>
+    <p>
+        <a href="refresh_game/{{match.game}}">Go to top list for {{ match.game }}.</a>
+    </p>
+
 {% endblock %}

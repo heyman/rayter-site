@@ -2,6 +2,7 @@ import os.path
 from StringIO import StringIO
 
 from flask import Flask, render_template, request, redirect, Response
+
 from time import strftime
 import json
 import requests
@@ -16,9 +17,11 @@ from rayter.rater import Rater
 import github_api
 import settings
 import data
+from auth import Auth
 
 
 app = Flask(__name__)
+auth = Auth(app, settings.RAYTER_USERS)
 
 
 def get_game_file(name):
@@ -153,6 +156,7 @@ def show_game(name):
 
 
 @app.route("/new", methods=["POST", "GET"])
+@auth.required
 def new_result():
     if request.method == 'POST':
         return post_new_result()
@@ -174,7 +178,10 @@ def get_new_result():
     players_list = list(players_set)
     players_list.sort()
 
-    return render_template("new.html", players=players_list, games=games)
+    return render_template("new.html",
+                           players=players_list,
+                           games=games,
+                           selected_game=request.args.get("game"))
 
 
 def post_new_result():

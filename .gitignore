@@ -2,3 +2,6 @@
 rayter-site.wpr
 data/**
 venv/**
+.env
+.vscode
+dump.rdb

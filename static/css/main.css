@@ -60,3 +60,20 @@ table td.delta.minus {
 table td.delta.minus {
     background-image: url(../img/arrow_down.gif);
 }
+
+form .player-score {
+    width: 50px;
+}
+
+form .player-name {
+    width: 200px;
+}
+
+form fieldset {
+    margin-top: 20px;
+}
+
+form label {
+    display: block;
+    margin-top: 5px;
+}

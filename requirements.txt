@@ -3,3 +3,4 @@ rayter>=0.1.4
 requests
 redis
 gunicorn==0.14.5
+PyGithub

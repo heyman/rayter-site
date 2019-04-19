@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}New game - {{super()}}{% endblock %}
+{% block body_class %}game{% endblock %}
+
+{% block content %}
+    <h1>New game</h1>
+    <form class="new-result" method="POST">
+        <label for="game">
+            Game:
+            <select class="game-name" name="game">
+                {% for game in games %}
+                    <option value="{{game}}">{{game}}</option>
+                {% endfor %}
+            </select>
+        </label>
+        {% for n in range(5) %}
+            <fieldset>
+                <label for="player{{n}}">
+                    Name:
+                    <select class="player-name" name="player">
+                        <option value="-">Select player</option>
+                        {% for player in players %}
+                        <option value="{{player}}">{{player}}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label for="score{{n}}">
+                    Score:
+                    <input class="player-score" type="text" name="score"/>
+                </label>
+            </fieldset>
+        {% endfor %}
+        {% for n in range(6, 9) %}
+            <fieldset>
+                <label for="player{{n}}">
+                    Name:
+                    <input placeholder="Name of new player" class="player-name" type="text" name="player{{n}}"/>
+                </label>
+                <label for="score{{n}}">
+                        Score:
+                        <input class="player-score" type="text" name="score{{n}}"/>
+                </label>
+            </fieldset>
+            sdsd
+        {% endfor %}
+        <input type="submit" value="Submit"/>
+    </form>
+{% endblock %}

@@ -5,9 +5,9 @@ from settings import RAYTER_GITHUB_TOKEN
 from time import strftime
 
 
-def update(repo_name, file_name, content, commit_message):
+def update(repo_path, file_name, content, commit_message):
     g = Github(RAYTER_GITHUB_TOKEN)
-    repo = g.get_user().get_repo(repo_name)
+    repo = g.get_repo(repo_path)
     master_ref = repo.get_git_ref("heads/master")
     master_sha = master_ref.object.sha
     base_tree = repo.get_git_tree(master_sha)

@@ -225,7 +225,7 @@ def update_on_github(match):
             new_content += "game " + match['time'] + "\n"
             for (player, score) in match['results']:
                 new_content += player + " " + score + "\n"
-            github_api.update('rayter-games', name + '.txt', new_content,
+            github_api.update(settings.RAYTER_GAMES_REPO, name + '.txt', new_content,
                               'New game added at ' + strftime('%H:%M:%S'))
             return True
     except requests.HTTPError as e:

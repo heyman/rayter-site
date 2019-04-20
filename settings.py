@@ -6,3 +6,4 @@ REMOTE_DATA_BASE_URL = (
 REDIS_URL = os.getenv("REDISTOGO_URL", "redis://localhost:6379")
 RAYTER_GITHUB_TOKEN = os.getenv("RAYTER_GITHUB_TOKEN")
 RAYTER_USERS = os.getenv("RAYTER_USERS")
+RAYTER_GAMES_REPO='peterjaric/rayter-games'

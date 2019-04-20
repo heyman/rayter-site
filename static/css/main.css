@@ -1,45 +1,46 @@
 body {
     padding: 30px;
-    font-family: Arial,Helvetica;
+    font-family: 'Lato', sans-serif;
     color: #555;
+    font-size: 25px;
 }
 
 h1 {
-    font-size: 32px;
-    margin-bottom: 15px;
+    font-size: 3em;
+    margin-bottom: 0.5em;
 }
 
 h2 {
-    font-size: 24px;
-    margin-bottom: 15px;
+    font-size: 2em;
+    margin-bottom: 0.5em;
 }
 
 p {
-    margin-bottom: 15px;
+    margin-bottom: 0.8em;
 }
 
 ul {
-    padding-left: 10px;
-    font-size: 16px;
+    padding-left: 0.5em;
+    font-size: 1em;
 }
 ul li {
     margin-bottom: 3px;
 }
 
 table {
-    margin-bottom: 40px;
+    margin-bottom: 2em;
 }
 
 table th {
     background: #f7f7f7;
     color: #000;
     text-transform: uppercase;
-    font-size: 12px;
+    font-size: 0.8em;
 }
 
 table td,
 table th {
-    padding: 10px;
+    padding: 0.8em;
     border: 1px solid #eee;
 }
 table td {
@@ -52,7 +53,7 @@ table td.rating {
     font-weight: bold;
 }
 table td.delta {
-    padding-right: 30px;
+    padding-right: 1.5em;
     width: 35px;
 }
 table td.delta.plus,
@@ -65,19 +66,91 @@ table td.delta.minus {
     background-image: url(../img/arrow_down.gif);
 }
 
-form .player-score {
-    width: 50px;
+form .player-score,
+form .player-name,
+form .game-name,
+input[type=submit] {
+    max-width: 600px;
 }
 
-form .player-name {
-    width: 200px;
+fieldset {
+    margin-top: 1em;
 }
 
-form fieldset {
-    margin-top: 20px;
+legend {
+    font-weight: bold;
 }
 
-form label {
+label {
     display: block;
-    margin-top: 5px;
+    margin-bottom: 0.3em;
+    margin-top: 0.5em;
+    font-size: 0.9em;
+}
+
+input[type=submit] {
+    padding: 0.5em;
+    background-color: #fff;
+    margin: 2.5em 0.5em 0.5em 0;
+    border: 1px solid #000;
+    width: 100%;
+}
+
+.selectize-control > .selectize-input input,
+.selectize-input .item,
+.selectize-dropdown .option {
+        font-size: 1.5em;
+}
+
+.selectize-dropdown {
+    font-size: 2em;
+}
+
+.tables {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.tables > * {
+    margin-right: 70px;    
+    flex: 0;
+}
+
+.tables table {
+    width: 100%;
+}
+
+
+ .nav {
+     margin-bottom: 2em;
+ }
+
+ .nav a {
+    text-decoration: dotted;
+    text-decoration-line: underline;
+    font-weight: bold;
+    color: #555;
+ }
+ .nav a:hover {
+    text-decoration: underline;
+ }
+
+ .nav a::after {
+    content: " - ";
+    text-decoration: none;
+ }
+ 
+ .nav a:last-child::after {
+    content: "";
+ }
+
+.footer {
+    margin-top: 100px;
+}
+ 
+@media (max-width: 900px) {
+    .tables > * {
+        flex: 1;
+    } 
 }

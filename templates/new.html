@@ -1,53 +1,57 @@
 {% extends "base.html" %}
-
 {% block title %}New game - {{super()}}{% endblock %}
 {% block body_class %}game{% endblock %}
 
 {% block content %}
-    <h1>New game</h1>
-    <p>
-        <a href="/">Back home</a>
+<script type="application/javascript">
+    $(function() {
+        $('#select-game').selectize({
+            selectOnTab: false,
+        });
+        $('.player-name').selectize({
+            create: true,
+            selectOnTab: false,
+        });
+    });
+</script>
+
+<h1>New game</h1>
+    <p class="nav">
+        <a href="/">Home</a>
         {% if selected_game %}
             <a href="/{{selected_game}}">Back to game</a>
         {% endif %}
     </p>
     
+    <p>
+        Select player names and enter their scores.
+    </p>
     <form class="new-result" method="POST">
         <label for="game">
             Game:
-            <select class="game-name" name="game">
-                {% for game in games %}
-                    <option  value="{{game}}" {% if game == selected_game %}selected{% endif %}>{{game}}</option>
-                {% endfor %}
-            </select>
         </label>
-        {% for n in range(5) %}
+        <select class="game-name" name="game" id="select-game">
+            <option>Select a game</option>
+            {% for game in games %}
+                <option  value="{{game}}" {% if game == selected_game %}selected{% endif %}>{{game}}</option>
+            {% endfor %}
+        </select>
+        {% for n in range(10) %}
             <fieldset>
+                <legend>Player {{n + 1}}</legend>
                 <label for="player{{n}}">
                     Name:
-                    <select class="player-name" name="player" id="player{{n}}">
+                </label>
+                <select class="player-name" name="player" id="player{{n}}">
                         <option value="-">Select player</option>
                         {% for player in players %}
                         <option value="{{player}}">{{player}}</option>
                         {% endfor %}
                     </select>
-                </label>
                 <label for="score{{n}}">
                     Score:
-                    <input class="player-score" type="text" name="score" id="score{{n}}"/>
                 </label>
-            </fieldset>
-        {% endfor %}
-        {% for n in range(6, 9) %}
-            <fieldset>
-                <label for="player{{n}}">
-                    Name:
-                    <input placeholder="Name of new player" class="player-name" type="text" name="player" id="player{{n}}"/>
-                </label>
-                <label for="score{{n}}">
-                    Score:
-                    <input class="player-score" type="text" name="score" id="score{{n}}"/>
-                </label>
+                <input class="player-score selectize-input" type="number" name="score" id="score{{n}}"/>
             </fieldset>
         {% endfor %}
         <input type="submit" value="Submit"/>

@@ -138,8 +138,12 @@ input[type=submit] {
 
  .nav a::after {
     content: " - ";
-    text-decoration: none;
- }
+    /* Get rid of text-decoration on this pseudo element. */
+    display: inline-block; /* So we can set a width */
+    width: 0;
+    margin-left: 0.5em; /* "Size" of the Pseudo-element */
+    margin-right: 0.5em; /* "Size" of the Pseudo-element */
+}
  
  .nav a:last-child::after {
     content: "";
@@ -150,7 +154,17 @@ input[type=submit] {
 }
  
 @media (max-width: 900px) {
-    .tables > * {
-        flex: 1;
+    .tables > *,
+    table {
+        margin-right: 0;
+        min-width: 100%;
+        max-width: 100%;
     } 
+    .tables {
+        flex-basis: 100%;
+    }
+    
+    body {
+        font-size: 13px;
+    }
 }

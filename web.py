@@ -96,6 +96,9 @@ def index():
                 global_ratings[player_name] = []
             global_ratings[player_name].append((rating, game_count))
 
+    # Sort games on count (games played) descending
+    games.sort(lambda game0, game1: game0[3] - game1[3], reverse=True)
+
     return render_template("index.html",
                            games=games,
                            top_list=top_list(global_ratings))

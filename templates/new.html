@@ -33,7 +33,7 @@
         <select class="game-name" name="game" id="select-game">
             <option>Select a game</option>
             {% for game in games %}
-                <option  value="{{game}}" {% if game == selected_game %}selected{% endif %}>{{game}}</option>
+                <option  value="{{game.name}}" {% if game.name == selected_game %}selected{% endif %}>{{game.game.game_name}}</option>
             {% endfor %}
         </select>
         {% for n in range(10) %}

@@ -170,18 +170,23 @@ def new_result():
 
 
 def get_new_result():
-    games = sorted(data.list())
+    games = map(lambda name: {
+        'name': name,
+        'game': data.load(name)
+    }, sorted(data.list()))
+
+
     players_set = set()
 
-    for name in games:
-        game = data.load(name)
-        players = game["ratings"]
+    for game in games:
+        players = game["game"]["ratings"]
         for player in players:
             name = player[0]
             players_set.add(name)
 
     players_list = list(players_set)
     players_list.sort()
+
 
     return render_template("new.html",
                            players=players_list,
@@ -204,6 +209,7 @@ def post_new_result():
         index += 1
 
     update_game(match)
+    refresh_from_game_file(match["game"])
 
     return render_template("new_display.html", match=match)
 

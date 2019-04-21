@@ -1,4 +1,6 @@
 from flask_basicauth import BasicAuth
+from flask import request
+
 
 class Auth(BasicAuth):
     def __init__(self, app, users_conf):
@@ -21,4 +23,10 @@ class Auth(BasicAuth):
 
     def check_credentials(self, username, password):
         match = self.users.get(username) == password
+
+        if match:
+            request.current_user = username
+        else:
+            request.current_user = None
+
         return match is True

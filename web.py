@@ -12,6 +12,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 logging.getLogger("github").setLevel(logging.WARNING)
+logging.getLogger("watchdog").setLevel(logging.WARNING)
 
 from rayter.main import parse_file
 from rayter.game_parser import GamesParser
@@ -66,13 +67,22 @@ def refresh_from_game_file(name):
 def top_list(ratings):
     average_ratings = []
     for player_name, player_data in ratings.items():
+        # player_data is a list of tuples of two numbers containing these values:
+        # ("player's rating in a game", "number of matches the player has played in that game") 
+       
         if len(player_data) > 3:
+            # Create a list of ratings for all games
             player_ratings = map(lambda tuple: tuple[0], player_data)
+            # Create a matching list of the number of played matches for each game
             player_counts = map(lambda tuple: tuple[1], player_data)
+       
+            # Add a "virtual" match where everyone has a rating of 1000 to make high ratings for players with few games count less
             player_ratings.append(1000)
+            # Increasing the virtual player count to more than 10 would make changes even slower, and vice versa.
+            # Let's try 10 for now. 
             player_counts.append(10)
+
             average = numpy.average(player_ratings, weights=player_counts)
-            #            average = float(sum(player_ratings)) / len(player_ratings)
             average_ratings.append((player_name, average))
 
     average_ratings.sort(key=lambda p: p[1], reverse=True)

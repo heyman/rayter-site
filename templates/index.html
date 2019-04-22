@@ -48,7 +48,12 @@
 {#
                         <td class="rating">{{ rating|int }}</td>
 #}
-                        <td class="rating">{{ (100 - rating * 100) | int }}%</td>
+                        {% set percent = 100 - rating * 100 %}
+                        <td class="rating">
+                            {% if percent >= 30 %}
+                                {{ percent | int }}%
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </table>

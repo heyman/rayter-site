@@ -48,7 +48,7 @@
 {#
                         <td class="rating">{{ rating|int }}</td>
 #}
-                        <td class="rating">{{ "{0:.3g}".format(100 - rating * 100) }}%</td>
+                        <td class="rating">{{ (100 - rating * 100) | int }}%</td>
                     </tr>
                 {% endfor %}
             </table>

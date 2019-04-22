@@ -106,7 +106,11 @@ def top_list_placements(placements):
             average = numpy.average(player_placements, weights=player_counts)
             average_placements.append((player_name, average))
 
-    average_placements.sort(key=lambda p: p[1])
+    average_placements.sort(key=lambda (player_name, average): average)
+
+    # Don't show players with a placement below 50% on the top list
+    average_placements = filter(lambda (player_name, average): average <= 0.5,
+                                average_placements)
 
     return average_placements
 

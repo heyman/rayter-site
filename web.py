@@ -64,22 +64,22 @@ def refresh_from_game_file(name):
         logging.error(e)
 
 
-def top_list(ratings):
+def top_list_ratings(ratings):
     average_ratings = []
     for player_name, player_data in ratings.items():
         # player_data is a list of tuples of two numbers containing these values:
-        # ("player's rating in a game", "number of matches the player has played in that game") 
-       
+        # ("player's rating in a game", "number of matches the player has played in that game")
+
         if len(player_data) > 3:
             # Create a list of ratings for all games
             player_ratings = map(lambda tuple: tuple[0], player_data)
             # Create a matching list of the number of played matches for each game
             player_counts = map(lambda tuple: tuple[1], player_data)
-       
+
             # Add a "virtual" match where everyone has a rating of 1000 to make high ratings for players with few games count less
             player_ratings.append(1000)
             # Increasing the virtual player count to more than 10 would make changes even slower, and vice versa.
-            # Let's try 10 for now. 
+            # Let's try 10 for now.
             player_counts.append(10)
 
             average = numpy.average(player_ratings, weights=player_counts)
@@ -90,28 +90,65 @@ def top_list(ratings):
     return average_ratings
 
 
+def top_list_placements(placements):
+    average_placements = []
+    for player_name, player_data in placements.items():
+        # player_data is a list of tuples of two numbers containing these values:
+        # ("player's placement in a game as a number between 0 and 1, 0 is better", "number of matches the player has played in that game")
+
+        # If player has played at least 3 games
+        if len(player_data) >= 3:
+            # Create a list of placements for all games
+            player_placements = map(lambda tuple: tuple[0], player_data)
+            # Create a matching list of the number of played matches for each game
+            player_counts = map(lambda tuple: tuple[1], player_data)
+
+            average = numpy.average(player_placements, weights=player_counts)
+            average_placements.append((player_name, average))
+
+    average_placements.sort(key=lambda p: p[1])
+
+    return average_placements
+
+
 @app.route("/")
 def index():
     game_names = sorted(data.list())
     games = []
     global_ratings = {}
+    global_placements = {}
 
     for name in game_names:
         game = data.load(name)
         players = game["ratings"]
         games.append((name, game["game_name"], players, game["count"]))
+        placement = 0
 
         for player_name, game_count, rating, delta in players:
             if player_name not in global_ratings:
                 global_ratings[player_name] = []
+            if player_name not in global_placements:
+                global_placements[player_name] = []
+
             global_ratings[player_name].append((rating, game_count))
+            # normalize placement to a number between 0 and 1, inclusive
+            # To make it inclusive, subtract 1 from the length of the players list.
+            # If the players list contains only one player, this would lead to
+            # division by zero. But that shouldn't happen, right...?
+            normalized_placement = placement / float(len(players) - 1)
+            global_placements[player_name].append(
+                (normalized_placement, game_count))
+            placement = placement + 1
 
     # Sort games on count (games played) descending
     games.sort(lambda game0, game1: game0[3] - game1[3], reverse=True)
 
     return render_template("index.html",
                            games=games,
-                           top_list=top_list(global_ratings))
+                           top_list=top_list_placements(global_placements))
+
+
+#                           top_list=top_list_ratings(global_ratings))
 
 
 @app.route("/refresh/<name>")
@@ -188,7 +225,6 @@ def get_new_result():
         'game': data.load(name)
     }, sorted(data.list()))
 
-
     players_set = set()
 
     for game in games:
@@ -199,7 +235,6 @@ def get_new_result():
 
     players_list = list(players_set)
     players_list.sort()
-
 
     return render_template("new.html",
                            players=players_list,

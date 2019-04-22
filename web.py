@@ -131,13 +131,17 @@ def index():
                 global_placements[player_name] = []
 
             global_ratings[player_name].append((rating, game_count))
-            # normalize placement to a number between 0 and 1, inclusive
-            # To make it inclusive, subtract 1 from the length of the players list.
-            # If the players list contains only one player, this would lead to
-            # division by zero. But that shouldn't happen, right...?
-            normalized_placement = placement / float(len(players) - 1)
-            global_placements[player_name].append(
-                (normalized_placement, game_count))
+
+            # Only include placements in games where the player has played at least 3 matches
+            if (game_count >= 3):
+                # normalize placement to a number between 0 and 1, inclusive
+                # To make it inclusive, subtract 1 from the length of the players list.
+                # If the players list contains only one player, this would lead to
+                # division by zero. But that shouldn't happen, right...?
+                normalized_placement = placement / float(len(players) - 1)
+                global_placements[player_name].append(
+                    (normalized_placement, game_count))
+
             placement = placement + 1
 
     # Sort games on count (games played) descending

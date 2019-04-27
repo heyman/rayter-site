@@ -127,6 +127,14 @@ td.name {
   position: relative;
 }
 
+.user-image {
+    border-radius: 30%;
+}
+
+h2 {
+    margin-top: 30px;
+}
+
 .tables {
   display: flex;
   flex-direction: row;

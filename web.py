@@ -292,12 +292,29 @@ def update_game(match):
         logging.error(e)
         return False
 
+def get_all_players():
+    game_names = sorted(games_data.list())
+    all_players = {}
+
+    for name in game_names:
+        game = games_data.load(name)
+        players = game["ratings"]
+        for player in players:
+            user_name = player[0]
+            all_players[user_name] = { "userName": user_name }
+
+    return all_players
+
+
+# FIXME: use posted data from Github instead of going there and fetching it
+# with default implementation of refresh_users
 @app.route("/post_push_users", methods=["POST"])
 def post_push_users():
     return refresh_users()
-    
+
 @app.route("/refresh_users")
 def refresh_users():
+    all_players = get_all_players()
     try:
         # Fetch user JSON fron "database layer"
         users_json = database.get_metadata("users.json")
@@ -307,12 +324,21 @@ def refresh_users():
         else:
             users_result = json.loads(users_json)
             users = users_result["users"]
-            # For every user, if she has no image, but an email, add gravatar image
+
+            # Overwrite generic player values with user metadata
             for user in users:
-                if not 'imageUrl' in user and 'email' in user:
-                    user['imageUrl'] = make_gravatar_url(user['email'])
+                all_players[user["userName"]] = user
+
+            # For every user, if she has no image add gravatar image or generated avatar
+            for player in all_players:
+                pprint(player)
+                user = all_players[player]
+                if not 'imageUrl' in user:
+                    user['imageUrl'] = make_image_url(user)
+                pprint(user)
+                
             # Save users to redis
-            users_data.save_users(users)
+            users_data.save_users(all_players.values())
             return "done"
     except requests.HTTPError as e:
         logging.error(e)
@@ -346,16 +372,23 @@ def show_user(name):
         abort(404)
 
 
-def make_gravatar_url(email):
-    if email:
-        size = 300
+def make_image_url(user):
+    # Don't override explicit imageUrl
+    if 'imageUrl' in user:
+        return user['imageUrl']
+
+    size = 300
+    fallbackImageUrl = 'https://api.adorable.io/avatars/' + str(size) + '/' + user['userName']
+
+    if 'email' in user:
+        email = user['email']
         hash = hashlib.md5(email.lower()).hexdigest()
         gravatar_url = "https://www.gravatar.com/avatar/" + hash + "?"
-        gravatar_url += urllib.urlencode({'s': str(size)})
+        gravatar_url += urllib.urlencode({'s': str(size), 'd': fallbackImageUrl})
         #    gravatar_url += urllib.urlencode({'d':default, 's':str(size)})
         return gravatar_url
     else:
-        return None
+        return fallbackImageUrl
 
 
 if __name__ == "__main__":

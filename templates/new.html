@@ -3,47 +3,46 @@
 {% block body_class %}game{% endblock %}
 
 {% block content %}
-<script type="application/javascript">
-    $(function() {
-        let users = {};
+    <script type="application/javascript">
+        $(function() {
+            let users = {};
 
-        {% for user in users %}
-            users["{{user}}"] = { 
-                {% if users[user]["displayName"] %}                
-                    "displayName": "{{users[user]["displayName"]}}",
-                {% endif %}
-                {% if users[user]["imageUrl"] %}                
-                    "imageUrl": "{{users[user]["imageUrl"]}}"
-                {% endif %}
-            };
-        {% endfor %}
+            {% for user in users %}
+                users["{{user}}"] = { 
+                    {% if users[user]["displayName"] %}                
+                        "displayName": "{{users[user]["displayName"]}}",
+                    {% endif %}
+                    {% if users[user]["imageUrl"] %}                
+                        "imageUrl": "{{users[user]["imageUrl"]}}"
+                    {% endif %}
+                };
+            {% endfor %}
 
-        $('#select-game').selectize({
-            selectOnTab: false,
-        });
-        $('.player-name').selectize({
-            create: true,
-            selectOnTab: false,
-            render: {
-                option: function(item, escape) {
-                    let user = users[item.value];
+            $('#select-game').selectize({
+                selectOnTab: false,
+            });
+            $('.player-name').selectize({
+                create: true,
+                selectOnTab: false,
+                render: {
+                    option: function(item, escape) {
+                        let user = users[item.value];
 
-                    let html =
-                        "<div class='option'>" + 
-                            (item.value == "-" ? "Select a player" : 
-                            (
-                                (user && user["imageUrl"] ? "<img class='user-image' src='" + escape(user["imageUrl"]) + "'>" : "") +
-                                (user && user["displayName"] ? escape(user["displayName"]) : escape(item.value))
-                            )) +
-                        "</div>";
-                    return html;
+                        let html =
+                            "<div class='option'>" + 
+                                (item.value == "-" ? "Select a player" : 
+                                (
+                                    (user && user["imageUrl"] ? "<img class='user-image' src='" + escape(user["imageUrl"]) + "'>" : "") +
+                                    (user && user["displayName"] ? escape(user["displayName"]) : escape(item.value))
+                                )) +
+                            "</div>";
+                        return html;
+                    }
                 }
-            }
+            });
         });
-    });
-</script>
+    </script>
 
-<h1>New game</h1>
     <p class="nav">
         <a href="/">Home</a>
         {% if selected_game %}
@@ -51,6 +50,7 @@
         {% endif %}
     </p>
     
+    <h1>New game</h1>
     <p>
         Select player names and enter their scores.
     </p>

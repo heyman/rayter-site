@@ -1,175 +1,191 @@
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-    padding: 30px;
-    font-family: 'Lato', sans-serif;
-    color: #555;
-    font-size: 25px;
+  padding: 30px;
+  font-family: "Lato", sans-serif;
+  color: #555;
+  font-size: 25px;
 }
 
 h1 {
-    font-size: 3em;
-    margin-bottom: 0.5em;
+  font-size: 3em;
+  margin-bottom: 0.5em;
 }
 
 h2 {
-    font-size: 2em;
-    margin-bottom: 0.5em;
+  font-size: 2em;
+  margin-bottom: 0.5em;
 }
 
 p {
-    margin-bottom: 0.8em;
+  margin-bottom: 0.8em;
 }
 
 ul {
-    padding-left: 0.5em;
-    font-size: 1em;
+  padding-left: 0.5em;
+  font-size: 1em;
 }
 ul li {
-    margin-bottom: 3px;
+  margin-bottom: 3px;
 }
 
 table {
-    margin-bottom: 2em;
+  margin-bottom: 2em;
 }
 
 table th {
-    background: #f7f7f7;
-    color: #000;
-    text-transform: uppercase;
-    font-size: 0.8em;
+  background: #f7f7f7;
+  color: #000;
+  text-transform: uppercase;
+  font-size: 0.8em;
 }
 
 table td,
 table th {
-    padding: 0.8em;
-    border: 1px solid #eee;
+  padding: 0.8em;
+  border: 1px solid #eee;
 }
 table td {
-    text-align: right;
+  text-align: right;
 }
 table td.name {
-    text-align: left;
+  text-align: left;
 }
 table td.rating {
-    font-weight: bold;
+  font-weight: bold;
 }
 table td.delta {
-    padding-right: 1.5em;
-    width: 35px;
+  padding-right: 1.5em;
+  width: 35px;
 }
 table td.delta.plus,
 table td.delta.minus {
-    background-image: url(../img/arrow_up.gif);
-    background-repeat: no-repeat;
-    background-position: 55px 17px;
+  background-image: url(../img/arrow_up.gif);
+  background-repeat: no-repeat;
+  background-position: 55px 17px;
 }
 table td.delta.minus {
-    background-image: url(../img/arrow_down.gif);
+  background-image: url(../img/arrow_down.gif);
 }
 
 form .player-score,
 form .player-name,
 form .game-name,
-input[type=submit] {
-    max-width: 600px;
+input[type="submit"] {
+  max-width: 600px;
 }
 
 fieldset {
-    margin-top: 1em;
+  margin-top: 1em;
 }
 
 legend {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 label {
-    display: block;
-    margin-bottom: 0.3em;
-    margin-top: 0.5em;
-    font-size: 0.9em;
+  display: block;
+  margin-bottom: 0.3em;
+  margin-top: 0.5em;
+  font-size: 0.9em;
 }
 
-input[type=submit] {
-    padding: 0.5em;
-    background-color: #fff;
-    margin: 2.5em 0.5em 0.5em 0;
-    border: 1px solid #000;
-    width: 100%;
+input[type="submit"] {
+  padding: 0.5em;
+  background-color: #fff;
+  margin: 2.5em 0.5em 0.5em 0;
+  border: 1px solid #000;
+  width: 100%;
+}
+
+.selectize-dropdown {
+  font-size: 4em;
 }
 
 .selectize-control > .selectize-input input,
 .selectize-input .item,
 .selectize-dropdown .option {
-        font-size: 1.5em;
+  font-size: 1.5em;
 }
 
-.selectize-dropdown {
-    font-size: 2em;
+.selectize-dropdown img,
+td.name img {
+  max-width: 1em;
+  max-height: 1em;
+  position: absolute;
+  left: 0.2em;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.selectize-dropdown div.option,
+td.name {
+  padding-left: 1.4em;
+  position: relative;
 }
 
 .tables {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .tables > * {
-    margin-right: 70px;    
-    flex: 0;
+  margin-right: 70px;
+  flex: 0;
 }
 
 .tables table {
-    width: 100%;
+  width: 100%;
 }
 
-
- .nav {
-     margin-bottom: 2em;
- }
-
- .nav a {
-    text-decoration: dotted;
-    text-decoration-line: underline;
-    font-weight: bold;
-    color: #555;
- }
- .nav a:hover {
-    text-decoration: underline;
- }
-
- .nav a::after {
-    content: " - ";
-    /* Get rid of text-decoration on this pseudo element. */
-    display: inline-block; /* So we can set a width */
-    width: 0;
-    margin-left: 0.5em; /* "Size" of the Pseudo-element */
-    margin-right: 0.5em; /* "Size" of the Pseudo-element */
+.nav {
+  margin-bottom: 2em;
 }
- 
- .nav a:last-child::after {
-    content: "";
- }
+
+a {
+  text-decoration: dotted;
+  text-decoration-line: underline;
+  font-weight: bold;
+  color: #555;
+}
+.nav a:hover {
+  text-decoration: underline;
+}
+
+.nav a::after {
+  content: " - ";
+  /* Get rid of text-decoration on this pseudo element. */
+  display: inline-block; /* So we can set a width */
+  width: 0;
+  margin-left: 0.5em; /* "Size" of the Pseudo-element */
+  margin-right: 0.5em; /* "Size" of the Pseudo-element */
+}
+
+.nav a:last-child::after {
+  content: "";
+}
 
 .footer {
-    margin-top: 100px;
+  margin-top: 100px;
 }
- 
+
 @media (max-width: 900px) {
-    .tables > *,
-    table {
-        margin-right: 0;
-        min-width: 100%;
-        max-width: 100%;
-    } 
-    .tables {
-        flex-basis: 100%;
-    }
-    
-    body {
-        font-size: 16px;
-        padding: 12px;
-    }
+  .tables > *,
+  table {
+    margin-right: 0;
+    min-width: 100%;
+    max-width: 100%;
+  }
+  .tables {
+    flex-basis: 100%;
+  }
+
+  body {
+    font-size: 16px;
+    padding: 12px;
+  }
 }

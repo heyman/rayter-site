@@ -18,10 +18,24 @@
             <th>Change</th>
         </tr>
         
+        {# FIXME: use a tuple with named parts instead of list indices #}
         {% for player in players %}
+            {% if users[player[0]] and users[player[0]]["displayName"] %}
+                {% set name = users[player[0]]["displayName"] %}
+            {% else %}
+                {% set name = player[0] %}
+            {% endif %}
+            {% if users[player[0]] and users[player[0]]["imageUrl"] %}
+                {% set image_url = users[player[0]]["imageUrl"] %}
+            {% endif %}
             <tr>
                 <td class="position">{{loop.index}}</td>
-                <td class="name">{{player[0]}}</td>
+                <td class="name">
+                    {% if image_url %}
+                        <img src="{{image_url}}">                
+                    {% endif %}
+                    <a href="/user/{{player[0]}}">{{name}}</a>                
+                </td>
                 <td class="game_count">{{player[1]}}</td>
                 <td class="rating">{{player[2]|int}}</td>
                 <td class="delta{% if player[3] > 0 %} plus{% elif player[3] < 0 %} minus{% endif %}">{{player[3]|int}}</td>

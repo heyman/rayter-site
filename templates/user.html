@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% set name = user['displayName'] or user['userName'] %}
+{% set imageUrl = user['imageUrl'] %}
+
+{% block title %}{{name}} - {{super()}}{% endblock %}
+{% block body_class %}user{% endblock %}
+
+{% block content %}
+    <p class="nav">
+        <a href="/">Home</a>
+    </p>
+
+    <h1>{{name}}</h1>
+
+    {% if imageUrl %}
+        <img class="user-image" src="{{imageUrl}}">
+    {% endif %}
+
+    {% if name != user["userName"] %}
+        <p>
+            Username: {{user['userName']}}
+        </p>
+    {% endif %}
+
+    <h2>Ratings</h2>
+    <table>
+        <tr>
+            <th>Game</th>
+            <th>Rating</th>
+            <th>Position</th>
+        </tr>
+        {% for game, game_name, rating, placement in ratings %}
+            <tr>
+                <td class="name"><a href="/{{game}}">{{game_name}}</a></td>
+                <td class="rating">{{rating | int}}</td>
+                <td class="position">{{placement + 1}}</td>
+            </tr>
+        {% endfor %}        
+    </table>
+
+
+{% endblock %}

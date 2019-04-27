@@ -5,12 +5,40 @@
 {% block content %}
 <script type="application/javascript">
     $(function() {
+        let users = {};
+
+        {% for user in users %}
+            users["{{user}}"] = { 
+                {% if users[user]["displayName"] %}                
+                    "displayName": "{{users[user]["displayName"]}}",
+                {% endif %}
+                {% if users[user]["imageUrl"] %}                
+                    "imageUrl": "{{users[user]["imageUrl"]}}"
+                {% endif %}
+            };
+        {% endfor %}
+
         $('#select-game').selectize({
             selectOnTab: false,
         });
         $('.player-name').selectize({
             create: true,
             selectOnTab: false,
+            render: {
+                option: function(item, escape) {
+                    let user = users[item.value];
+
+                    let html =
+                        "<div class='option'>" + 
+                            (item.value == "-" ? "Select a player" : 
+                            (
+                                (user && user["imageUrl"] ? "<img class='user-image' src='" + escape(user["imageUrl"]) + "'>" : "") +
+                                (user && user["displayName"] ? escape(user["displayName"]) : escape(item.value))
+                            )) +
+                        "</div>";
+                    return html;
+                }
+            }
         });
     });
 </script>
@@ -31,7 +59,7 @@
             Game:
         </label>
         <select class="game-name" name="game" id="select-game">
-            <option>Select a game</option>
+            <option value="-">Select a game</option>
             {% for game in games %}
                 <option  value="{{game.name}}" {% if game.name == selected_game %}selected{% endif %}>{{game.game.game_name}}</option>
             {% endfor %}
@@ -43,7 +71,7 @@
                     Name:
                 </label>
                 <select class="player-name" name="player" id="player{{n}}">
-                        <option value="-">Select player</option>
+                        <option>Select a player</option>
                         {% for player in players %}
                         <option value="{{player}}">{{player}}</option>
                         {% endfor %}

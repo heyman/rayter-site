@@ -7,6 +7,8 @@ from time import strftime
 import json
 import requests
 import numpy
+import hashlib
+import urllib
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
@@ -20,12 +22,13 @@ from rayter.rater import Rater
 
 from pprint import pprint
 
-import game_content
+import database
 import settings
-import data
+import games_data
+import users_data
 from auth import Auth
 
-import game_content
+import database
 
 app = Flask(__name__)
 auth = Auth(app, settings.RAYTER_USERS)
@@ -35,7 +38,7 @@ def get_game_file(name):
     """
     Fetch game file.
     """
-    return game_content.get(name + ".txt")
+    return database.get_game(name + ".txt")
 
 
 def refresh_from_game_file(name):
@@ -46,7 +49,7 @@ def refresh_from_game_file(name):
         content = get_game_file(name)
 
         if content == None:
-            data.delete(name)
+            games_data.delete(name)
             return False
         else:
             parser = GamesParser(StringIO(content), name)
@@ -58,7 +61,7 @@ def refresh_from_game_file(name):
                 "ratings": ratings,
                 "count": len(games),
             }
-            data.save(name, game)
+            games_data.save(name, game)
             return True
     except requests.HTTPError as e:
         logging.error(e)
@@ -113,13 +116,12 @@ def top_list_placements(placements):
 
 @app.route("/")
 def index():
-    game_names = sorted(data.list())
+    game_names = sorted(games_data.list())
     games = []
-    global_ratings = {}
     global_placements = {}
 
     for name in game_names:
-        game = data.load(name)
+        game = games_data.load(name)
         players = game["ratings"]
         games.append((name, game["game_name"], players, game["count"]))
         placement = 0
@@ -137,12 +139,15 @@ def index():
                     # If the players list contains only one player, this would lead to
                     # division by zero. But that shouldn't happen, right...?
                     normalized_placement = placement / float(len(players) - 1)
-                    global_placements[player_name].append((normalized_placement, game_count))
+                    global_placements[player_name].append(
+                        (normalized_placement, game_count))
 
                 placement = placement + 1
 
     # Sort games on count (games played) descending
-    games.sort(lambda (n0, gn0, p0, count0), (n1, gn1, p1, count1): count0 - count1, reverse=True)
+    games.sort(lambda (n0, gn0, p0, count0), (n1, gn1, p1, count1): count0 -
+               count1,
+               reverse=True)
 
     return render_template("index.html",
                            games=games,
@@ -167,7 +172,7 @@ def refresh_game(name):
 
 @app.route("/refresh_all")
 def refresh_all():
-    game_names = data.list()
+    game_names = games_data.list()
     for name in game_names:
         refresh_from_game_file(name)
     return "done"
@@ -198,11 +203,14 @@ def favicon():
 @app.route("/<name>")
 def show_game(name):
     try:
-        game_data = data.load(name)
+        game_data = games_data.load(name)
+        users = users_data.list_users()
+
         return render_template("game.html",
                                name=name,
                                players=game_data["ratings"],
-                               game_name=game_data["game_name"])
+                               game_name=game_data["game_name"],
+                               users=users)
     except TypeError as te:
         logging.error(te)
         abort(404)
@@ -220,8 +228,8 @@ def new_result():
 def get_new_result():
     games = map(lambda name: {
         'name': name,
-        'game': data.load(name)
-    }, sorted(data.list()))
+        'game': games_data.load(name)
+    }, sorted(games_data.list()))
 
     players_set = set()
 
@@ -234,9 +242,12 @@ def get_new_result():
     players_list = list(players_set)
     players_list.sort()
 
+    users = users_data.list_users()
+
     return render_template("new.html",
                            players=players_list,
                            games=games,
+                           users=users,
                            selected_game=request.args.get("game"))
 
 
@@ -266,19 +277,83 @@ def update_game(match):
         content = get_game_file(name)
 
         if content == None:
-            return False
+            return "False"
         else:
             new_content = content + "\n"
             new_content += "game " + match["time"] + "\n"
             for (player, score) in match["results"]:
                 new_content += player + " " + score + "\n"
-            game_content.update(
+            database.update_game(
                 name + ".txt", new_content,
                 "New game added by " + (request.current_user or "unkown") +
                 " at " + strftime("%H:%M:%S"))
             return True
     except requests.HTTPError as e:
         logging.error(e)
+        return False
+
+
+@app.route("/refresh_users")
+def refresh_users():
+    try:
+        # Fetch user JSON fron "database layer"
+        users_json = database.get_metadata("users.json")
+
+        if users_json == None:
+            return "no json found"
+        else:
+            users_result = json.loads(users_json)
+            users = users_result["users"]
+            # For every user, if she has no image, but an email, add gravatar image
+            for user in users:
+                if not 'imageUrl' in user and 'email' in user:
+                    user['imageUrl'] = make_gravatar_url(user['email'])
+            # Save users to redis
+            users_data.save_users(users)
+            return "done"
+    except requests.HTTPError as e:
+        logging.error(e)
+        return "exception"
+
+
+@app.route("/user/<name>")
+def show_user(name):
+    existing_user = users_data.load(name)
+    user = existing_user or {"userName": name}
+
+    game_names = sorted(games_data.list())
+    ratings = []
+
+    for game_name in game_names:
+        game = games_data.load(game_name)
+        players = game["ratings"]
+        placement = 0
+        for player_name, _0, rating, _1 in players:
+            if player_name == name:
+                ratings.append((game_name, game["game_name"], rating, placement))
+            placement += 1
+
+    ratings.sort(lambda (game0, game_name0, rating0, placement0), (game1, game_name1, rating1, placement1): int(rating0 -
+                                                                rating1),
+                 reverse=True)
+    pprint(ratings)
+
+    if len(ratings) > 0 or existing_user:
+        return render_template("user.html", user=user, ratings=ratings)
+    else:
+        abort(404)
+
+
+def make_gravatar_url(email):
+    if email:
+        size = 300
+        hash = hashlib.md5(email.lower()).hexdigest()
+        gravatar_url = "https://www.gravatar.com/avatar/" + hash + "?"
+        gravatar_url += urllib.urlencode({'s': str(size)})
+        #    gravatar_url += urllib.urlencode({'d':default, 's':str(size)})
+        return gravatar_url
+    else:
+        return None
 
 
 if __name__ == "__main__":

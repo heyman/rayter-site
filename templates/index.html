@@ -22,9 +22,11 @@
                     <th>Total games</th>
                 </tr>
                 {% for name, game_name, players, game_count in games %}
+                    {% set leader = players[0][0] %}
+                    {% set leader_name = users[leader]['displayName'] or leader %}
                     <tr>
                         <td class="name"><a href="/{{ name }}">{{ game_name }}</a></td>
-                        <td class="name">{% if players|length > 0 %}{{ players[0][0] }}{% endif %}</td>
+                        <td class="name">{% if players|length > 0 %}<a href="/user/{{leader}}">{{ leader_name }}</a>{% endif %}</td>
                         <td class="rating">{% if players|length > 0 %}{{ players[0][2]|int }}{% endif %}</td>
                         <td class="rating">{{ game_count }}</td>
                     </tr>
@@ -38,18 +40,13 @@
                 <tr>
                     <th>Position</th>
                     <th>Name</th>
-{#
-                    <th>Average rating</th>
-#}
                     <th>Average placement</th>
                 </tr>
                 {% for name, rating in top_list %}
+                    {% set display_name = users[name]['displayName'] or name %}
                     <tr>
                         <td class="position">{{ loop.index }}</td>
-                        <td class="name">{{ name }}</td>
-{#
-                        <td class="rating">{{ rating|int }}</td>
-#}
+                        <td class="name"><a href="/user/{{name}}">{{ display_name }}</a></td>
                         {% set percent = 100 - rating * 100 %}
                         <td class="rating">
                             {% if percent >= 30 %}

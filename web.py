@@ -149,8 +149,11 @@ def index():
                count1,
                reverse=True)
 
+    users = users_data.list_users()
+
     return render_template("index.html",
                            games=games,
+                           users=users,
                            top_list=top_list_placements(global_placements))
 
 
@@ -292,6 +295,7 @@ def update_game(match):
         logging.error(e)
         return False
 
+
 def get_all_players():
     game_names = sorted(games_data.list())
     all_players = {}
@@ -301,7 +305,7 @@ def get_all_players():
         players = game["ratings"]
         for player in players:
             user_name = player[0]
-            all_players[user_name] = { "userName": user_name }
+            all_players[user_name] = {"userName": user_name}
 
     return all_players
 
@@ -311,6 +315,7 @@ def get_all_players():
 @app.route("/post_push_users", methods=["POST"])
 def post_push_users():
     return refresh_users()
+
 
 @app.route("/refresh_users")
 def refresh_users():
@@ -336,7 +341,7 @@ def refresh_users():
                 if not 'imageUrl' in user:
                     user['imageUrl'] = make_image_url(user)
                 pprint(user)
-                
+
             # Save users to redis
             users_data.save_users(all_players.values())
             return "done"
@@ -359,11 +364,12 @@ def show_user(name):
         placement = 0
         for player_name, _0, rating, _1 in players:
             if player_name == name:
-                ratings.append((game_name, game["game_name"], rating, placement))
+                ratings.append(
+                    (game_name, game["game_name"], rating, placement))
             placement += 1
 
-    ratings.sort(lambda (game0, game_name0, rating0, placement0), (game1, game_name1, rating1, placement1): int(rating0 -
-                                                                rating1),
+    ratings.sort(lambda (game0, game_name0, rating0, placement0), (
+        game1, game_name1, rating1, placement1): int(rating0 - rating1),
                  reverse=True)
 
     if len(ratings) > 0 or existing_user:
@@ -378,13 +384,17 @@ def make_image_url(user):
         return user['imageUrl']
 
     size = 300
-    fallbackImageUrl = 'https://api.adorable.io/avatars/' + str(size) + '/' + user['userName']
+    fallbackImageUrl = 'https://api.adorable.io/avatars/' + str(
+        size) + '/' + user['userName']
 
     if 'email' in user:
         email = user['email']
         hash = hashlib.md5(email.lower()).hexdigest()
         gravatar_url = "https://www.gravatar.com/avatar/" + hash + "?"
-        gravatar_url += urllib.urlencode({'s': str(size), 'd': fallbackImageUrl})
+        gravatar_url += urllib.urlencode({
+            's': str(size),
+            'd': fallbackImageUrl
+        })
         #    gravatar_url += urllib.urlencode({'d':default, 's':str(size)})
         return gravatar_url
     else:

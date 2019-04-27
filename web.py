@@ -292,7 +292,10 @@ def update_game(match):
         logging.error(e)
         return False
 
-
+@app.route("/post_push_users", methods=["POST"])
+def post_push_users():
+    return refresh_users()
+    
 @app.route("/refresh_users")
 def refresh_users():
     try:
@@ -336,7 +339,6 @@ def show_user(name):
     ratings.sort(lambda (game0, game_name0, rating0, placement0), (game1, game_name1, rating1, placement1): int(rating0 -
                                                                 rating1),
                  reverse=True)
-    pprint(ratings)
 
     if len(ratings) > 0 or existing_user:
         return render_template("user.html", user=user, ratings=ratings)

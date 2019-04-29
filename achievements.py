@@ -101,4 +101,10 @@ definitions = {
         'name': 'Versatile',
         'text': 'Played all games'
     },
+     # played all games
+    'potential': {
+        'image': 'level-up-alt',
+        'name': 'Potential',
+        'text': 'Has real potential to improve rating!'
+    },
 }

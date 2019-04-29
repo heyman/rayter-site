@@ -266,6 +266,8 @@ def show_user(name):
             user_achievements.append(achievements.definitions['challenger'])
         elif ratings[0][2] > 1000:
             user_achievements.append(achievements.definitions['not_bad'])
+        if ratings[0][2] < 1000:
+            user_achievements.append(achievements.definitions['potential'])
         if len(ratings) >= 5:
             user_achievements.append(achievements.definitions['multi_player'])
         if len(ratings) == 1:

@@ -44,11 +44,13 @@ function setupChart(ctx, gameData) {
     data: {
       datasets: Object.keys(gameData.players).map(function(name, index) {
         let history = gameData.players[name];
+        let theColor = color({ dataIndex: index });
 
         return {
           lineTension: 0.2,
           fill: false,
-          borderColor: color({ dataIndex: index }),
+          backgroundColor: theColor,
+          borderColor: theColor,
           label: name,
           data: Object.keys(history).map(function(matchNumber) {
             return { x: matchNumber, y: Math.round(history[matchNumber]) };

@@ -128,11 +128,11 @@ td.name {
 }
 
 .user-image {
-    border-radius: 30%;
+  border-radius: 30%;
 }
 
 h2 {
-    margin-top: 30px;
+  margin-top: 30px;
 }
 
 .tables {
@@ -179,6 +179,26 @@ a {
 
 .footer {
   margin-top: 100px;
+}
+
+/* See https://www.chartjs.org/docs/latest/general/responsive.html#important-note */
+#chart-container {
+  display: none;
+  padding: 30px 0;
+  position: relative;
+  height: 120vw;
+  width: 100%;
+  max-width: 1200px;
+  max-height: 900px;
+}
+
+#toggle-chart {
+  padding: 0.4em;
+  font-size: 1em;
+  margin: 10px 0;
+  background-color: #fff;
+  border-radius: 7px;
+  border: 1px solid #555;
 }
 
 @media (max-width: 900px) {

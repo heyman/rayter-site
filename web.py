@@ -44,9 +44,13 @@ def favicon():
     abort(404)
 
 
-@app.route("/<name>")
-def show_game(name):
-    return web_impl.show_game(name)
+@app.route("/<game_name>")
+def show_game(game_name):
+    return web_impl.show_game(game_name)
+
+@app.route("/<game_name>.json")
+def show_game_json(game_name):
+    return web_impl.show_game_json(game_name)
 
 
 @app.route("/new", methods=["POST", "GET"])

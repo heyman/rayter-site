@@ -2,13 +2,42 @@
 
 {% block title %}{{game_name}} - {{super()}}{% endblock %}
 {% block body_class %}game{% endblock %}
-
 {% block content %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js"></script>
+    <script src="/static/js/charts.js"></script>
+    
+    <script>
+        $(function() {
+            var chartInitialized = false;
+
+            $('#toggle-chart').click(function() {
+                $('#chart-container').fadeToggle();
+
+                if (!chartInitialized) {
+                    let ctx = $('#chart').get(0).getContext('2d');
+
+                    fetch('/{{name}}.json')
+                        .then(function(response) {
+                            return response.json();
+                        })
+                        .then(function(gameData) {
+                            chartInitialized = true;
+                            setupChart(ctx, gameData);
+                        });
+                }
+            });
+        });
+    </script>
+    
     <p class="nav">
         <a href="/">Home</a>
         <a href="/new?game={{name}}">Add new match result</a>
     </p>
     <h1>{{game_name}}</h1>
+    <button id="toggle-chart">Toggle chart</button> 
+    <div id="chart-container">
+        <canvas id="chart" class="chart"></canvas>
+    </div>
     <table>
         <tr>
             <th>Position</th>

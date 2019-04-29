@@ -16,6 +16,7 @@ import requests
 import settings
 import urllib
 import users_data
+import logging
 
 
 def get_game_file(name):
@@ -42,6 +43,10 @@ def refresh_from_game_file(name):
             ratings = rater.rate_games(parser.score_type)
             game = {
                 "game_name": parser.game_name,
+                "players": {
+                    name: player.rating_history
+                    for (name, player) in rater.players.items()
+                },
                 "ratings": ratings,
                 "count": len(games),
             }
@@ -248,11 +253,9 @@ def refresh_users():
 
             # For every user, if she has no image add gravatar image or generated avatar
             for player in all_players:
-                pprint(player)
                 user = all_players[player]
                 if not 'imageUrl' in user:
                     user['imageUrl'] = make_image_url(user)
-                pprint(user)
 
             # Save users to redis
             users_data.save_users(all_players.values())
@@ -272,6 +275,15 @@ def show_game(name):
                                players=game_data["ratings"],
                                game_name=game_data["game_name"],
                                users=users)
+    except TypeError as te:
+        logging.error(te)
+        abort(404)
+
+
+def show_game_json(name):
+    try:
+        game_data = games_data.load(name)
+        return Response(json.dumps(game_data), mimetype='application/json')
     except TypeError as te:
         logging.error(te)
         abort(404)

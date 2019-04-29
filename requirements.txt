@@ -1,3 +1,4 @@
+werkzeug==0.14.1
 Flask==0.9
 Flask-BasicAuth
 rayter>=0.1.4
@@ -6,3 +7,4 @@ redis
 gunicorn==0.14.5
 PyGithub
 numpy
+watchdog

@@ -23,7 +23,11 @@
                 </tr>
                 {% for name, game_name, players, game_count in games %}
                     {% set leader = players[0][0] %}
-                    {% set leader_name = users[leader]['displayName'] or leader %}
+                    {% if leader in users and 'displayName' in users[leader] %}
+                        {% set leader_name = users[leader]['displayName'] %}
+                    {% else %}
+                        {% set leader_name = leader %}
+                    {% endif %}
                     <tr>
                         <td class="name"><a href="/{{ name }}">{{ game_name }}</a></td>
                         <td class="name">{% if players|length > 0 %}<a href="/user/{{leader}}">{{ leader_name }}</a>{% endif %}</td>
@@ -43,7 +47,11 @@
                     <th>Average placement</th>
                 </tr>
                 {% for name, rating in top_list %}
-                    {% set display_name = users[name]['displayName'] or name %}
+                    {% if name in users and 'displayName' in users[name] %}
+                        {% set display_name = users[name]['displayName'] %}
+                    {% else %}
+                        {% set display_name = name %}
+                    {% endif %}
                     <tr>
                         <td class="position">{{ loop.index }}</td>
                         <td class="name"><a href="/user/{{name}}">{{ display_name }}</a></td>

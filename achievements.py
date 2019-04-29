@@ -43,7 +43,7 @@ definitions = {
     },
     # leader in at least one game
     'number_one': {
-        'image': 'medal',
+        'image': 'crown',
         'name': 'Number One',
         'text': 'Leader of at least one game'
     },
@@ -64,25 +64,35 @@ definitions = {
         'image': 'star',
         'name': 'Star',
         'text': 'Played at least five games and all ratings above 1100'
-    }
+    },
+     # place 0 in global chart
+    'global_chart_gold': {
+        'image': 'trophy',
+        'name': 'Global Chart #1',
+        'text': 'Number one on the global chart of average placement'
+    },
+     # place 1 in global chart
+    'global_chart_silver': {
+        'image': 'medal',
+        'name': 'Global Chart #2',
+        'text': 'Number two on the global chart of average placement'
+    },
+     # place 2 in global chart
+    'global_chart_bronze': {
+        'image': 'award',
+        'name': 'Global Chart #3',
+        'text': 'Number three on the global chart of average placement'
+    },
+     # Played at least 5 different types of games
+    'multi_player': {
+        'image': 'headset',
+        'name': 'Multi Player',
+        'text': 'Played at least five different types of games'
+    },
+     # on global chart
+    'charter': {
+        'image': 'list-ol',
+        'name': 'Charter',
+        'text': 'Member of the global chart of average placement'
+    },
 }
-"""
-     # 
-    '': {
-        'image': '',
-        'name': '',
-        'text': ''
-    },
-    # 
-    '': {
-        'image': '',
-        'name': '',
-        'text': ''
-    },
-    # 
-    '': {
-        'image': '',
-        'name': '',
-        'text': ''
-    },
-"""

@@ -3,7 +3,7 @@
 {% block content %}
     <p class="nav">
         <a href="new">Add new match result</a>
-        <a href="#top-list">Top list</a>
+        <a href="#global-chart">Global Chart</a>
     </p>
 
     <h1>Rayter</h1>
@@ -38,15 +38,15 @@
             </table>
         </div>
         
-        <div id="top-list">
-            <h2>Top list</h2>
+        <div id="global-chart">
+            <h2>Global Chart</h2>
             <table>
                 <tr>
                     <th>Position</th>
                     <th>Name</th>
                     <th>Average placement</th>
                 </tr>
-                {% for name, rating in top_list %}
+                {% for name, rating in global_chart %}
                     {% if name in users and 'displayName' in users[name] %}
                         {% set display_name = users[name]['displayName'] %}
                     {% else %}
@@ -68,7 +68,7 @@
                 100% = first in all games, 0% = last in all games.
             </p>
             <p>
-                The top list includes only players 
+                The global chart includes only players 
                 with at least three games played and it only counts placements in games where the
                 player has played at least three matches.
             </p>

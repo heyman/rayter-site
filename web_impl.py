@@ -56,7 +56,7 @@ def refresh_from_game_file(name):
         logging.error(e)
 
 
-def top_list_ratings(ratings):
+def global_chart_ratings(ratings):
     average_ratings = []
     for player_name, player_data in ratings.items():
         # player_data is a list of tuples of two numbers containing these values:
@@ -82,7 +82,7 @@ def top_list_ratings(ratings):
     return average_ratings
 
 
-def top_list_placements(placements):
+def global_chart_placements(placements):
     average_placements = []
     for player_name, player_data in placements.items():
         # player_data is a list of tuples of two numbers containing these values:
@@ -229,6 +229,14 @@ def show_user(name):
         game1, game_name1, rating1, placement1): int(rating0 - rating1),
                  reverse=True)
 
+    # FIXME: (?)
+    # All games are traversed twice, first in the loop above and then inside
+    # get_games_and_toplist(), maybe they can be combined?
+    (games, global_chart) = get_games_and_toplist()
+
+    a = len(global_chart) >= 1 and global_chart[0][0] == name
+    pprint(a)
+
     user_achievements = []
 
     if len(ratings) > 0:
@@ -252,10 +260,21 @@ def show_user(name):
             user_achievements.append(achievements.definitions['diverse'])
         if len(ratings) >= 5 and ratings[-1][2] > 1100:
             user_achievements.append(achievements.definitions['star'])
-        if len([placement for (game, name, rating, placement) in ratings if placement == 0]) > 0:
+        if len([placement for (game, game_name, rating, placement) in ratings if placement == 0]) > 0:
             user_achievements.append(achievements.definitions['number_one'])
+        if len(global_chart) >= 1 and global_chart[0][0] == name:
+            user_achievements.append(achievements.definitions['global_chart_gold'])
+        if len(global_chart) >= 2 and global_chart[1][0] == name:
+            user_achievements.append(achievements.definitions['global_chart_silver'])
+        if len(global_chart) >= 3 and global_chart[2][0] == name:
+            user_achievements.append(achievements.definitions['global_chart_bronze'])
+        if len(ratings) >= 5:
+            user_achievements.append(achievements.definitions['multi_player'])
+        if len([player for (player, percent) in global_chart if player == name]) > 0:
+            user_achievements.append(achievements.definitions['charter'])
 
 
+    pprint(user_achievements)
 
     if len(ratings) > 0 or existing_user:
         return render_template("user.html", user=user, ratings=ratings, achievements=user_achievements)
@@ -353,8 +372,7 @@ def refresh(name):
     else:
         abort(404)
 
-
-def index():
+def get_games_and_toplist():
     game_names = sorted(games_data.list())
     games = []
     global_placements = {}
@@ -383,6 +401,11 @@ def index():
 
                 placement = placement + 1
 
+    return (games, global_chart_placements(global_placements))
+
+def index():
+    (games, global_chart) = get_games_and_toplist()
+
     # Sort games on count (games played) descending
     games.sort(lambda (n0, gn0, p0, count0), (n1, gn1, p1, count1): count0 -
                count1,
@@ -393,4 +416,4 @@ def index():
     return render_template("index.html",
                            games=games,
                            users=users,
-                           top_list=top_list_placements(global_placements))
+                           global_chart=global_chart)

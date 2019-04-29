@@ -252,6 +252,8 @@ def show_user(name):
             user_achievements.append(achievements.definitions['charter'])
         if len(ratings) >= 3 and ratings[2][2] > 1100:
             user_achievements.append(achievements.definitions['diverse'])
+        if len(ratings) == len(games):
+            user_achievements.append(achievements.definitions['versatile'])
         if ratings[0][2] > 2500:
             user_achievements.append(achievements.definitions['grand_master'])
         elif ratings[0][2] > 2000:

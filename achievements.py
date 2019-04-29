@@ -95,4 +95,10 @@ definitions = {
         'name': 'Charter',
         'text': 'Member of the global chart of average placement'
     },
+     # played all games
+    'versatile': {
+        'image': 'asterisk',
+        'name': 'Versatile',
+        'text': 'Played all games'
+    },
 }

@@ -49,8 +49,14 @@ table th {
   padding: 0.8em;
   border: 1px solid #eee;
 }
+table th.number {
+  text-align: right;
+}
 table td {
   text-align: right;
+}
+table td.position {
+  text-align: left;
 }
 table td.name {
   text-align: left;

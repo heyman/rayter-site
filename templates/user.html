@@ -22,6 +22,15 @@
         </p>
     {% endif %}
 
+    {% if achievements | length > 0 %}
+        <h2>Achievements</h2>
+        <ul class="achievements">
+            {% for achievement in achievements %}
+                <li class="achievement" title="{{achievement['text']}}"><div class="achievement-image"><span class="fas fa-fw fa-{{achievement['image']}}"></span></div><span class="achievement-name">{{achievement['name']}}</span></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
     <h2>Ratings</h2>
     <table>
         <tr>

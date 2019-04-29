@@ -17,7 +17,7 @@ import settings
 import urllib
 import users_data
 import logging
-
+import achievements
 
 def get_game_file(name):
     """
@@ -229,8 +229,36 @@ def show_user(name):
         game1, game_name1, rating1, placement1): int(rating0 - rating1),
                  reverse=True)
 
+    user_achievements = []
+
+    if len(ratings) > 0:
+        if ratings[0][2] > 2500:
+            user_achievements.append(achievements.definitions['grand_master'])
+        elif ratings[0][2] > 2000:
+            user_achievements.append(achievements.definitions['master'])
+        elif ratings[0][2] > 1500:
+            user_achievements.append(achievements.definitions['journeyman'])
+        elif ratings[0][2] > 1300:
+            user_achievements.append(achievements.definitions['apprentice'])
+        elif ratings[0][2] > 1100:
+            user_achievements.append(achievements.definitions['challenger'])
+        elif ratings[0][2] > 1000:
+            user_achievements.append(achievements.definitions['not_bad'])
+        if len(ratings) == 1:
+            user_achievements.append(achievements.definitions['snowflake'])
+        if ratings[0][2] > 1100 and ratings[-1][2] < 900:
+            user_achievements.append(achievements.definitions['fluctuating'])
+        if len(ratings) >= 3 and ratings[2][2] > 1100:
+            user_achievements.append(achievements.definitions['diverse'])
+        if len(ratings) >= 5 and ratings[-1][2] > 1100:
+            user_achievements.append(achievements.definitions['star'])
+        if len([placement for (game, name, rating, placement) in ratings if placement == 0]) > 0:
+            user_achievements.append(achievements.definitions['number_one'])
+
+
+
     if len(ratings) > 0 or existing_user:
-        return render_template("user.html", user=user, ratings=ratings)
+        return render_template("user.html", user=user, ratings=ratings, achievements=user_achievements)
     else:
         abort(404)
 

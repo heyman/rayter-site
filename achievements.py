@@ -68,19 +68,19 @@ definitions = {
      # place 0 in global chart
     'global_chart_gold': {
         'image': 'trophy',
-        'name': 'Global Chart #1',
+        'name': 'Global #1',
         'text': 'Number one on the global chart of average placement'
     },
      # place 1 in global chart
     'global_chart_silver': {
         'image': 'medal',
-        'name': 'Global Chart #2',
+        'name': 'Global #2',
         'text': 'Number two on the global chart of average placement'
     },
      # place 2 in global chart
     'global_chart_bronze': {
         'image': 'award',
-        'name': 'Global Chart #3',
+        'name': 'Global #3',
         'text': 'Number three on the global chart of average placement'
     },
      # Played at least 5 different types of games

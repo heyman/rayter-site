@@ -31,8 +31,8 @@
                     <tr>
                         <td class="name"><a href="/{{ name }}">{{ game_name }}</a></td>
                         <td class="name">{% if players|length > 0 %}<a href="/user/{{leader}}">{{ leader_name }}</a>{% endif %}</td>
-                        <td class="rating">{% if players|length > 0 %}{{ players[0][2]|int }}{% endif %}</td>
-                        <td class="rating">{{ game_count }}</td>
+                        <td class="number">{% if players|length > 0 %}{{ players[0][2]|int }}{% endif %}</td>
+                        <td class="count number">{{ game_count }}</td>
                     </tr>
                 {% endfor %}
             </table>

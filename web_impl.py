@@ -19,6 +19,7 @@ import users_data
 import logging
 import achievements
 
+
 def get_game_file(name):
     """
     Fetch game file.
@@ -238,45 +239,18 @@ def show_user(name):
 
     # ratings roughly ordered by value, best first, since they will be displayed in that order on the web page
     if len(ratings) > 0:
-        if len(global_chart) >= 1 and global_chart[0][0] == name:
-            user_achievements.append(achievements.definitions['global_chart_gold'])
-        if len(global_chart) >= 2 and global_chart[1][0] == name:
-            user_achievements.append(achievements.definitions['global_chart_silver'])
-        if len(global_chart) >= 3 and global_chart[2][0] == name:
-            user_achievements.append(achievements.definitions['global_chart_bronze'])
-        if len(ratings) >= 5 and ratings[-1][2] > 1100:
-            user_achievements.append(achievements.definitions['star'])
-        if len([placement for (game, game_name, rating, placement) in ratings if placement == 0]) > 0:
-            user_achievements.append(achievements.definitions['number_one'])
-        if len([player for (player, percent) in global_chart if player == name]) > 0:
-            user_achievements.append(achievements.definitions['charter'])
-        if len(ratings) >= 3 and ratings[2][2] > 1100:
-            user_achievements.append(achievements.definitions['diverse'])
-        if len(ratings) == len(games):
-            user_achievements.append(achievements.definitions['versatile'])
-        if ratings[0][2] > 2500:
-            user_achievements.append(achievements.definitions['grand_master'])
-        elif ratings[0][2] > 2000:
-            user_achievements.append(achievements.definitions['master'])
-        elif ratings[0][2] > 1500:
-            user_achievements.append(achievements.definitions['journeyman'])
-        elif ratings[0][2] > 1300:
-            user_achievements.append(achievements.definitions['apprentice'])
-        elif ratings[0][2] > 1100:
-            user_achievements.append(achievements.definitions['challenger'])
-        elif ratings[0][2] > 1000:
-            user_achievements.append(achievements.definitions['not_bad'])
-        if ratings[0][2] < 1000:
-            user_achievements.append(achievements.definitions['potential'])
-        if len(ratings) >= 5:
-            user_achievements.append(achievements.definitions['multi_player'])
-        if len(ratings) == 1:
-            user_achievements.append(achievements.definitions['snowflake'])
-        if ratings[0][2] > 1100 and ratings[-1][2] < 900:
-            user_achievements.append(achievements.definitions['fluctuating'])
+        user_achievements = achievements.get_eligible_achievements({
+            "ratings": ratings,
+            "global_chart": global_chart,
+            "name": name,
+            "games": games
+        })
 
     if len(ratings) > 0 or existing_user:
-        return render_template("user.html", user=user, ratings=ratings, achievements=user_achievements)
+        return render_template("user.html",
+                               user=user,
+                               ratings=ratings,
+                               achievements=user_achievements)
     else:
         abort(404)
 
@@ -371,6 +345,7 @@ def refresh(name):
     else:
         abort(404)
 
+
 def get_games_and_toplist():
     game_names = sorted(games_data.list())
     games = []
@@ -401,6 +376,11 @@ def get_games_and_toplist():
                 placement = placement + 1
 
     return (games, global_chart_placements(global_placements))
+
+def show_achievements():
+    return render_template("achievements.html",
+                           achievements=sorted(achievements.definitions, reverse=True))
+
 
 def index():
     (games, global_chart) = get_games_and_toplist()

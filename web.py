@@ -78,6 +78,9 @@ def refresh_users():
 def show_user(name):
     return web_impl.show_user(name)
 
+@app.route("/achievements")
+def achievements():
+    return web_impl.show_achievements()
 
 if __name__ == "__main__":
     app.run(debug=True)

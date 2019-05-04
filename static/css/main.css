@@ -171,17 +171,18 @@ a:hover {
   text-decoration: underline;
 }
 
-.nav a::after {
-  content: " - ";
+.nav a::before {
+  content: "-";
   /* Get rid of text-decoration on this pseudo element. */
   display: inline-block; /* So we can set a width */
   width: 0;
   margin-left: 0.5em; /* "Size" of the Pseudo-element */
-  margin-right: 0.5em; /* "Size" of the Pseudo-element */
+  margin-right: 1em; /* "Size" of the Pseudo-element */
 }
 
-.nav a:last-child::after {
+.nav a:first-child::before {
   content: "";
+  display: none;
 }
 
 .footer {
@@ -234,10 +235,15 @@ ul.achievements {
   margin-bottom: 10px;
 }
 
-.achievement-name {
+.mobile {
+  display: none;
 }
 
 @media (max-width: 900px) {
+  .mobile {
+    display: initial;
+  }
+
   .tables > *,
   table {
     margin-right: 0;

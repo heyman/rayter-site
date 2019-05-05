@@ -14,9 +14,9 @@ def get(repo_path, file_name):
     g = Github(settings.RAYTER_GITHUB_TOKEN)
     repo = g.get_repo(repo_path)
     try:
-        file = repo.get_contents(file_name)
-        content = file.content
-        return b64decode(content)
+        f = repo.get_contents(file_name)
+        content = f.content
+        return b64decode(content).decode("utf-8")
     except UnknownObjectException as e:
         logging.error(e)
         return None

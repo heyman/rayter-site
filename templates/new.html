@@ -40,6 +40,9 @@
                     }
                 }
             });
+
+            // Fix autocomplete-problem with selectize. See https://github.com/selectize/selectize.js/pull/1363
+            document.querySelectorAll('input[type=select-one]').forEach(function(e) { e.setAttribute('autocomplete', 'new-password'); });
         });
     </script>
 
@@ -79,7 +82,7 @@
                 <label for="score{{n}}">
                     Score:
                 </label>
-                <input class="player-score selectize-input" type="number" name="score" id="score{{n}}"/>
+                <input class="player-score selectize-input" type="number" name="score" id="score{{n}}" autocomplete="off"/>
             </fieldset>
         {% endfor %}
         <input type="submit" value="Submit"/>

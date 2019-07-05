@@ -1,7 +1,7 @@
 werkzeug==0.14.1
 Flask==0.9
 Flask-BasicAuth
-rayter>=0.1.5
+rayter>=0.1.7
 requests
 redis
 gunicorn==0.14.5

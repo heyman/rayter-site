@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}New game - {{super()}}{% endblock %}
+{% block title %}New result for {{game.game_name}} - {{super()}}{% endblock %}
 {% block body_class %}game{% endblock %}
 
 {% block content %}
@@ -18,9 +18,6 @@
                 };
             {% endfor %}
 
-            $('#select-game').selectize({
-                selectOnTab: false,
-            });
             $('.player-name').selectize({
                 create: true,
                 selectOnTab: false,
@@ -48,25 +45,17 @@
 
     <p class="nav">
         <a href="/">Home</a>
-        {% if selected_game %}
-            <a href="/{{selected_game}}">Back to game</a>
+        {% if game_name %}
+            <a href="/{{game_name}}">Back to game</a>
         {% endif %}
     </p>
     
-    <h1>New game</h1>
+    <h1>New result for {{game.game_name}}</h1>
     <p>
         Select player names and enter their scores.
     </p>
-    <form class="new-result" method="POST">
-        <label for="game">
-            Game:
-        </label>
-        <select class="game-name" name="game" id="select-game">
-            <option value="-">Select a game</option>
-            {% for game in games %}
-                <option  value="{{game.name}}" {% if game.name == selected_game %}selected{% endif %}>{{game.game.game_name}}</option>
-            {% endfor %}
-        </select>
+    <form class="new-result" method="POST" action="new">
+        <input type="hidden" name="game" value="{{game_name}}"/>
         {% for n in range(10) %}
             <fieldset>
                 <legend>Player {{n + 1}}</legend>
@@ -74,15 +63,25 @@
                     Name:
                 </label>
                 <select class="player-name" name="player" id="player{{n}}">
-                        <option>Select a player</option>
-                        {% for player in players %}
+                    <option value="">Select a player</option>
+                    {% for player in players %}
                         <option value="{{player}}">{{player}}</option>
-                        {% endfor %}
+                    {% endfor %}
+                </select>
+                {% if game.score_type == 'winnertakesall' %}
+                    <label for="score{{n}}">
+                        Result:
+                    </label>
+                    <select name="score" id="score{{n}}">
+                        <option value="0">Lost</option>
+                        <option value="1">Won</option>
                     </select>
-                <label for="score{{n}}">
-                    Score:
-                </label>
-                <input class="player-score selectize-input" type="number" name="score" id="score{{n}}" autocomplete="off"/>
+                {% else %}
+                    <label for="score{{n}}">
+                        Score:
+                    </label>
+                    <input class="player-score selectize-input" type="number" name="score" id="score{{n}}" autocomplete="off"/>
+                {% endif %}
             </fieldset>
         {% endfor %}
         <input type="submit" value="Submit"/>

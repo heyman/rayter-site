@@ -50,7 +50,11 @@ def refresh_from_game_file(name):
                 },
                 "ratings": ratings,
                 "count": len(games),
+                "score_type": parser.score_type
             }
+
+            pprint(game)
+
             games_data.save(name, game)
             return True
     except requests.HTTPError as e:
@@ -105,15 +109,17 @@ def global_chart_placements(placements):
 
 
 def get_new_result():
-    games = map(lambda name: {
-        'name': name,
-        'game': games_data.load(name)
-    }, sorted(games_data.list()))
+    game_name = request.args.get("game")
+    if not game_name:
+        return redirect("/")
+
+    current_game = games_data.load(game_name)
+    games = map(lambda name: games_data.load(name), games_data.list())
 
     players_set = set()
 
     for game in games:
-        players = game["game"]["ratings"]
+        players = game["ratings"]
         for player in players:
             name = player[0]
             players_set.add(name)
@@ -125,9 +131,9 @@ def get_new_result():
 
     return render_template("new.html",
                            players=players_list,
-                           games=games,
+                           game=current_game,
                            users=users,
-                           selected_game=request.args.get("game"))
+                           game_name=game_name)
 
 
 def post_new_result():
@@ -138,10 +144,14 @@ def post_new_result():
         "game": request.form.get("game")
     }
 
-    for player in request.form.getlist("player"):
-        score = request.form.getlist("score")[index]
-        if player and score:
-            match["results"].append((player, score))
+    scores = request.form.getlist("score")
+    players = request.form.getlist("player")
+    
+    for player in players:
+        if player:
+            if len(scores) > index and scores[index] != None:
+                score = scores[index]
+                match["results"].append((player, score))
         index += 1
 
     update_game(match)

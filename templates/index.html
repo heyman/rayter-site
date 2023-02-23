@@ -20,8 +20,8 @@
                     <th>Leader rating</th>
                     <th>Total games</th>
                 </tr>
-                {% for name, game_name, players, game_count in games %}
-                    {% set leader = players[0][0] %}
+                {% for game in games %}
+                    {% set leader = game.ratings[0][0] %}
                     {% if leader in users and 'displayName' in users[leader] %}
                         {% set leader_name = users[leader]['displayName'] %}
                     {% else %}
@@ -32,24 +32,24 @@
                     {% endif %}
                     <tr>
                         <td class="name">
-                            <a href="/{{ name }}">{{ game_name }}</a>
+                            <a href="/{{ game.slug }}">{{ game.game_name }}</a>
                         </td>
                         <td class="name avatar">
-                            {% if players|length > 0 %}
+                            {% if game.ratings|length > 0 %}
                                 {% if image_url %}
-                                    <img class="user-image" src="{{image_url}}">                
+                                    <img class="user-image" src="{{image_url}}">
                                 {% endif %}
                                 <a href="/user/{{leader}}">{{ leader_name }}</a>
                             {% endif %}</td>
-                        <td class="number">{% if players|length > 0 %}{{ players[0][2]|int }}{% endif %}</td>
-                        <td class="count number">{{ game_count }}</td>
+                        <td class="number">{% if game.ratings|length > 0 %}{{ game.ratings[0][2]|int }}{% endif %}</td>
+                        <td class="count number">{{ game.count }}</td>
                     </tr>
                 {% endfor %}
             </table>
         </div>
-        
+
         <div id="global-chart">
-            <h2>Global Chart</h2>
+            <h2>Overall placement</h2>
             <table>
                 <tr>
                     <th>Position</th>
@@ -69,7 +69,7 @@
                         <td class="position">{{ loop.index }}</td>
                         <td class="name avatar">
                             {% if image_url %}
-                                <img class="user-image" src="{{image_url}}">                
+                                <img class="user-image" src="{{image_url}}">
                             {% endif %}
                             <a href="/user/{{name}}">{{ display_name }}</a>
                         </td>
@@ -86,15 +86,29 @@
                 100% = first in all games, 0% = last in all games.
             </p>
             <p>
-                The global chart includes only players 
+                The global chart includes only players
                 with at least three games played and it only counts placements in games where the
                 player has played at least three matches.
             </p>
             <p>
-                The average is weighted, meaning 
+                The average is weighted, meaning
                 that a game where the player has played many matches will count more towards
                 the average than a match where the player only played a few matches.
             </p>
         </div>
+
+        <div id="event-log">
+            <h2>Events</h2>
+            <table>
+                <tr>
+                    <th>Event</th>
+                </tr>
+                {% for message in log %}
+                    <tr>
+                        <td >{{ message }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
-    {% endblock %}
+{% endblock %}

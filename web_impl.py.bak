@@ -1,18 +1,20 @@
 from pprint import pprint
+import sys; sys.path.append('C:\\Users\\peter\\code\\rayter-static-site\\venv\\Lib\\site-packages');
 from rayter.game_parser import GamesParser
 from rayter.main import parse_file
 from rayter.rater import Rater
-from io import StringIO
+from StringIO import StringIO
 from time import strftime
 
-from jinja2 import Environment, PackageLoader, select_autoescape
-import requests
 import database
 import games_data
 import hashlib
 import json
 import numpy
-import urllib.request, urllib.parse, urllib.error
+import os.path
+import settings
+import urllib
+import users_data
 import logging
 import achievements
 import misc_data
@@ -45,7 +47,7 @@ def refresh_from_game_file(name):
                 "game_name": parser.game_name,
                 "players": {
                     name: player.rating_history
-                    for (name, player) in list(rater.players.items())
+                    for (name, player) in rater.players.items()
                 },
                 "ratings": ratings,
                 "count": len(games),
@@ -61,15 +63,15 @@ def refresh_from_game_file(name):
 
 def global_chart_ratings(ratings):
     average_ratings = []
-    for player_name, player_data in list(ratings.items()):
+    for player_name, player_data in ratings.items():
         # player_data is a list of tuples of two numbers containing these values:
         # ("player's rating in a game", "number of matches the player has played in that game")
 
         if len(player_data) > 3:
             # Create a list of ratings for all games
-            player_ratings = [tuple[0] for tuple in player_data]
+            player_ratings = map(lambda tuple: tuple[0], player_data)
             # Create a matching list of the number of played matches for each game
-            player_counts = [tuple[1] for tuple in player_data]
+            player_counts = map(lambda tuple: tuple[1], player_data)
 
             # Add a "virtual" match where everyone has a rating of 1000 to make high ratings for players with few games count less
             player_ratings.append(1000)
@@ -87,28 +89,32 @@ def global_chart_ratings(ratings):
 
 def global_chart_placements(placements):
     average_placements = []
-    for player_name, player_data in list(placements.items()):
+    for player_name, player_data in placements.items():
         # player_data is a list of tuples of two numbers containing these values:
         # ("player's placement in a game as a number between 0 and 1, 0 is better", "number of matches the player has played in that game")
 
         # If player has played at least 3 games
         if len(player_data) >= 3:
             # Create a list of placements for all games
-            player_placements = [tuple[0] for tuple in player_data]
+            player_placements = map(lambda tuple: tuple[0], player_data)
             # Create a matching list of the number of played matches for each game
-            player_counts = [tuple[1] for tuple in player_data]
+            player_counts = map(lambda tuple: tuple[1], player_data)
 
             average = numpy.average(player_placements, weights=player_counts)
             average_placements.append((player_name, average))
 
-    average_placements.sort(key=lambda player_name_average: player_name_average[1])
+    average_placements.sort(key=lambda (player_name, average): average)
 
     return average_placements
 
 
-def get_new_result(game_name):
+def get_new_result():
+    game_name = request.args.get("game")
+    if not game_name:
+        return redirect("/")
+
     current_game = games_data.load(game_name)
-    games = [games_data.load(name) for name in games_data.list()]
+    games = map(lambda name: games_data.load(name), games_data.list())
 
     players_set = set()
 
@@ -130,14 +136,17 @@ def get_new_result(game_name):
                            game_name=game_name)
 
 
-def post_new_result(game, scores, players):
+def post_new_result():
     index = 0
     match = {
         "results": [],
         "time": strftime("%Y-%m-%d %H:%M"),
-        "game": game
+        "game": request.form.get("game")
     }
 
+    scores = request.form.getlist("score")
+    players = request.form.getlist("player")
+    
     for player in players:
         if player:
             if len(scores) > index and scores[index] != None:
@@ -152,7 +161,7 @@ def post_new_result(game, scores, players):
     return render_template("new_display.html", match=match)
 
 
-def update_game(match, current_user):
+def update_game(match):
     name = match["game"]
     try:
         content = get_game_file(name)
@@ -166,7 +175,7 @@ def update_game(match, current_user):
                 new_content += player + " " + score + "\n"
             database.update_game(
                 name + ".txt", new_content,
-                "New game added by " + (current_user or "unkown") +
+                "New game added by " + (request.current_user or "unkown") +
                 " at " + strftime("%H:%M:%S"))
             return True
     except requests.HTTPError as e:
@@ -201,7 +210,7 @@ def make_image_url(user):
         email = user['email']
         hash = hashlib.md5(email.lower()).hexdigest()
         gravatar_url = "https://www.gravatar.com/avatar/" + hash + "?"
-        gravatar_url += urllib.parse.urlencode({
+        gravatar_url += urllib.urlencode({
             's': str(size),
             'd': fallbackImageUrl
         })
@@ -228,8 +237,9 @@ def show_user(name):
                     (game_name, game["game_name"], rating, placement))
             placement += 1
 
-    # Sort ratings by rating, best first. The actual rating is the third element in the tuple.
-    ratings.sort(lambda rating0, rating1: int(rating0[2] - rating1[2]), reverse=True)
+    ratings.sort(lambda (game0, game_name0, rating0, placement0), (
+        game1, game_name1, rating1, placement1): int(rating0 - rating1),
+                 reverse=True)
 
     # FIXME: (?)
     # All games are traversed twice, first in the loop above and then inside
@@ -253,7 +263,8 @@ def show_user(name):
                                ratings=ratings,
                                achievements=user_achievements)
     else:
-        return render_template("user_not_found.html", user=user)
+        abort(404)
+
 
 def refresh_users():
     all_players = get_all_players()
@@ -277,8 +288,8 @@ def refresh_users():
                 if not 'imageUrl' in user:
                     user['imageUrl'] = make_image_url(user)
 
-            # Save users
-            users_data.save_users(list(all_players.values()))
+            # Save users to redis
+            users_data.save_users(all_players.values())
             return "done"
     except requests.HTTPError as e:
         logging.error(e)
@@ -297,19 +308,20 @@ def show_game(name):
                                users=users)
     except TypeError as te:
         logging.error(te)
-        return render_template("game_not_found.html", name=name)
+        abort(404)
 
-# def show_game_json(name):
-#     try:
-#         game_data = games_data.load(name)
-#         return Response(json.dumps(game_data), mimetype='application/json')
-#     except TypeError as te:
-#         logging.error(te)
-#         abort(404)
+
+def show_game_json(name):
+    try:
+        game_data = games_data.load(name)
+        return Response(json.dumps(game_data), mimetype='application/json')
+    except TypeError as te:
+        logging.error(te)
+        abort(404)
 
 def add_game_events_to_log(game):
     for player_name, game_count, rating, delta in game["ratings"]:
-        print(player_name)
+        print player_name
         if delta != 0:
             if delta > -0.5 and delta <= 0.5:
                 message = player_name + " held their ground in " + game["game_name"] + "."
@@ -320,14 +332,15 @@ def add_game_events_to_log(game):
             misc_data.add_to_log(message)
 
 
-def post_push(data):
+def post_push():
     updated = {}
+    data = request.form["payload"]
     push_info = json.loads(data)
     for commit in push_info["commits"]:
         for name in commit.get("added", []) + commit.get("removed", []) + commit.get("modified", []):
             updated[name] = True
 
-    for name in updated.keys():
+    for name in updated.iterkeys():
         if name.endswith(".txt"):
             game = refresh_from_game_file(name[:-4])
             if game:
@@ -344,7 +357,18 @@ def refresh_all():
 
 
 def refresh_game(name):
-    return refresh_from_game_file(name)
+    if refresh_from_game_file(name):
+        return redirect("/" + name)
+    else:
+        abort(404)
+
+
+def refresh(name):
+    if refresh_from_game_file(name):
+        return "done"
+    else:
+        abort(404)
+
 
 def get_games_and_toplist():
     game_names = sorted(games_data.list())
@@ -385,8 +409,10 @@ def show_achievements():
 def index():
     (games, global_chart) = get_games_and_toplist()
 
-    # Sort games on count (games played) descending. The count is the fourth element in the tuple.
-    games.sort(lambda game0, game1: game0[3] - game1[3], reverse=True)
+    # Sort games on count (games played) descending
+    games.sort(lambda (n0, gn0, p0, count0), (n1, gn1, p1, count1): count0 -
+               count1,
+               reverse=True)
 
     users = users_data.list_users()
     log = misc_data.get_log()
@@ -396,10 +422,3 @@ def index():
                            users=users,
                            global_chart=global_chart,
                            log=log)
-
-def main():
-    refresh_game("hearts")
-    print(get_all_players())
-
-if __name__ == "__main__":
-    main()

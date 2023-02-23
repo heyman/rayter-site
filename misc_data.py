@@ -1,9 +1,7 @@
-import os.path
 import json
-import settings
 
-db_prefix = "rayter_"
-db_path = "data/rayter_db.json"
+db_prefix = "misc_"
+db_path = "data/misc_db.json"
 
 def db_key(name):
     return db_prefix + name
@@ -36,11 +34,14 @@ def delete(name):
         with open(db_path, "w") as f:
             json.dump(db, f)
 
-def list():
-    with open(db_path, "r") as f:
-        db = json.load(f)
-        names = []
-        for key in db.keys():
-            if key.startswith(db_prefix):
-                names.append(key[len(db_prefix):])
-        return names
+def get_log():
+    log = load("log")
+    return log if log else []
+
+def save_log(log):
+    save("log", log)
+
+def add_to_log(message):
+    log = get_log()
+    log.insert(0, message)
+    save_log(log)

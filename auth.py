@@ -15,7 +15,7 @@ class Auth(BasicAuth):
             @auth.required
             def something():
             """
-        super(Auth, self).__init__(app)
+        super().__init__(app)
         self.users = {}
         for user_conf in users_conf.split(','):
             (user, password) = user_conf.split(':')

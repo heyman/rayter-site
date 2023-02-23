@@ -6,3 +6,5 @@ venv/**
 .vscode
 dump.rdb
 run.sh
+.history
+output/**

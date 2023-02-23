@@ -1,10 +1,5 @@
-werkzeug==0.14.1
-Flask==0.9
-Flask-BasicAuth
-rayter>=0.1.7
+rayter
 requests
-redis
-gunicorn==0.14.5
 PyGithub
 numpy
-watchdog
+Jinja2
